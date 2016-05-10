@@ -63,7 +63,7 @@ def html_table(rows)
         <tr>
           <th>Avatar</th>
           <th>Name</th>
-          <th>Time Killed</th>
+          <th>Time Played</th>
           <th>Deaths</th>
           <th>Players Killed</th>
           <th>Villagers Killed</th>
