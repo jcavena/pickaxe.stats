@@ -66,26 +66,28 @@ def html_table(rows)
           <th>Time Played</th>
           <th>Deaths</th>
           <th>Players Killed</th>
-          <th>Villagers Killed</th>
-          <th>Pigmen Killed</th>
-          <th>Ghast Killed</th>
-          <th>Horses Killed</th>
+    EOF
+    KILLENTITY_KEYS.each do |key|
+      snippet += "<th>#{key.split('.').last.capitalize}</th>"
+    end
+    snippet += <<-EOF
         </tr>
       </thead>
       <tbody>
-  EOF
+    EOF
   rows.each do |row|
     snippet += <<-EOF
       <tr>
         <td data-sort="#{row[0].downcase}"><div class="head-skins" data-player="#{row[0]}"></div></td>
         <td>#{row[0]}</td>
-        <td data-sort='#{row[8]}'>#{row[1]}</td>
+        <td data-sort='#{row[1]}'>#{humanize(row[1].to_i)}</td>
         <td>#{row[2]}</td>
         <td>#{row[3]}</td>
-        <td>#{row[4]}</td>
-        <td>#{row[5]}</td>
-        <td>#{row[6]}</td>
-        <td>#{row[7]}</td>
+    EOF
+    4.upto(row.length - 1) do |index|
+      snippet += "<td>#{row[index]}</td>"
+    end
+    snippet += <<-EOF        
       </tr>
     EOF
   end
