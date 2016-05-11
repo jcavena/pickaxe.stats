@@ -82,7 +82,6 @@ if mode == 'adventuring_time'
 end
 
 if mode == 'player_stats.html'
-  require 'haml'
   # GENERATE STATS IN HTML
   rows = []
 
@@ -113,7 +112,8 @@ if mode == 'player_stats.html'
     end
   end
 
-  puts generate_html(rows)
+  contents = generate_html(rows)
+  File.open('index.html', 'w'){ |file| file.write contents}
 end
 
 

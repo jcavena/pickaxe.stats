@@ -1,11 +1,16 @@
 
 def humanize secs
-  [[60, :seconds], [60, :minutes], [24, :hours], [1000, :days]].map{ |count, name|
+  #[[60, :seconds], [60, :minutes], [24, :hours], [1000, :days]].map{ |count, name|
+  [[60, ''], [60, ':'], [24, ':'], [1000, ' days ']].map{ |count, name|
     if secs > 0
       secs, n = secs.divmod(count)
-      "#{n.to_i} #{name}"
+      if n.to_i < 10 && name != ' days '
+        "0#{n.to_i}#{name}"
+      else
+        "#{n.to_i}#{name}"
+      end
     end
-  }.compact.reverse.join(' ')
+  }.compact.reverse.join('')
 end
 
 
@@ -16,8 +21,7 @@ end
 
 def html_header
   snippet = <<-EOF
-
-  <!doctype html>
+<!doctype html>
   <html>
     <head>
       <title>Pickaxe.club Killer Stats!</title>
@@ -68,7 +72,7 @@ def html_table(rows)
           <th>Players Killed</th>
     EOF
     KILLENTITY_KEYS.each do |key|
-      snippet += "<th>#{key.split('.').last.capitalize}</th>"
+      snippet += "<th>#{key.split('.').last.gsub(/entity/i,'')}</th>"
     end
     snippet += <<-EOF
         </tr>
