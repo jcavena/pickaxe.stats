@@ -74,27 +74,49 @@ BIOMES = [
 ]
 
 
+  request_uri = USER_CACHE_URI
+  url = "#{request_uri}"
+
+  # Actually fetch the contents of the remote URL as a String.
+  buffer = open(url).read
+  player_list = JSON.parse(buffer).sort_by{|hash| hash['name'].downcase}
+
 
   # GENERATE STATS IN HTML
   keys = []
 
   #look for achievement keys
+  player_list.each do |user|
+    request_uri = USER_URI_TEMPLATE.gsub("UUID", user['uuid'])
+    url = "#{request_uri}"
 
+    begin
+      buffer = open(url).read
+      result = JSON.parse(buffer)
 
-  request_uri = XCAVE_STATS
-  url = "#{request_uri}"
+      keys << result.keys
+    rescue 
+      #sometimes there is no matching json file.
+      #puts "#{user['name']},0,0,0,0,0,0,0,0"
+    end
 
-  begin
-    buffer = open(url).read
-    result = JSON.parse(buffer)
-
-    keys << result.keys.sort
-
-  rescue 
-    #nothin'
+    keys = keys.flatten.uniq
   end
 
-  puts keys.join(',')  
+  # request_uri = XCAVE_STATS
+  # url = "#{request_uri}"
+
+  # begin
+  #   buffer = open(url).read
+  #   result = JSON.parse(buffer)
+
+  #   keys << result.keys.sort
+
+  # rescue 
+  #   #nothin'
+  # end
+
+  puts keys.sort.join(',')  
 
   
 

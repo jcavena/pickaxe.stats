@@ -203,6 +203,7 @@ KILLENTITY_KEYS = [
 ]
 
 TRAVEL_KEYS = [
+  'stat.aviateOneCm',
   'stat.boatOneCm',
   'stat.climbOneCm',
   'stat.crouchOneCm',

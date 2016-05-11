@@ -193,11 +193,11 @@ player_list = get_player_list
 # generate_adventuring_time(player_list)
 # puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
 
-puts "GENERATING ACHIEVEMENTS PAGE..."
-generate_achievements(player_list)
-puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
+# puts "GENERATING ACHIEVEMENTS PAGE..."
+# generate_achievements(player_list)
+# puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
 
-# puts "GENERATING TRAVEL PAGE..."
-# generate_travel_stats(player_list)
-# puts "FINISHED GENERATING TRAVEL PAGE..."
+puts "GENERATING TRAVEL PAGE..."
+generate_travel_stats(player_list)
+puts "FINISHED GENERATING TRAVEL PAGE..."
 
