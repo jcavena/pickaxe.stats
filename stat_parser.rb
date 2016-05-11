@@ -181,17 +181,17 @@ end
 
 player_list = get_player_list
 
-# puts "GENERATING KILL STATS PAGE..."
-# generate_kill_stats(player_list)
-# puts "FINISHED GENERATING KILL STATS PAGE..."
+puts "GENERATING KILL STATS PAGE..."
+generate_kill_stats(player_list)
+puts "FINISHED GENERATING KILL STATS PAGE..."
 
-# puts "GENERATING ADVENTURING TIME PAGE..."
-# generate_adventuring_time(player_list)
-# puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
+puts "GENERATING ADVENTURING TIME PAGE..."
+generate_adventuring_time(player_list)
+puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
 
-# puts "GENERATING ACHIEVEMENTS PAGE..."
-# generate_achievements(player_list)
-# puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
+puts "GENERATING ACHIEVEMENTS PAGE..."
+generate_achievements(player_list)
+puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
 
 puts "GENERATING TRAVEL PAGE..."
 generate_travel_stats(player_list)
