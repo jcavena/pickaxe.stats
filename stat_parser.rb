@@ -8,13 +8,15 @@ require 'pp'
 require_relative 'constants.rb'
 require_relative 'helpers.rb'
 
+def get_player_list
+  request_uri = USER_CACHE_URI
+  url = "#{request_uri}"
 
-request_uri = USER_CACHE_URI
-url = "#{request_uri}"
+  # Actually fetch the contents of the remote URL as a String.
+  buffer = open(url).read
+  player_list = JSON.parse(buffer).sort_by{|hash| hash['name'].downcase}
 
-# Actually fetch the contents of the remote URL as a String.
-buffer = open(url).read
-player_list = JSON.parse(buffer).sort_by{|hash| hash['name'].downcase}
+end
 
 def generate_player_stats_csv(player_list)
   # CSV friendly version. Just printing to console and saving manually. Should just save to csv file instead.    
@@ -38,12 +40,10 @@ def generate_player_stats_csv(player_list)
   end
 end
 
-
 def generate_kill_stats(player_list)
   template = File.open('template.html').read
   #GENERATE KILL STATS PAGE (index.html)
   
-  template = File.open('template.html').read
   rows = []
   
   #'Name,Time Killed,Deaths,Players Killed, KILLENTITY_KEYS*'
@@ -140,16 +140,60 @@ def generate_achievements(player_list)
   
 end
 
+def generate_travel_stats(player_list)
+  template = File.open('template.html').read
+  #GENERATE KILL STATS PAGE (index.html)
+  
+  rows = []
+  
+  #'Name,Time Killed,Deaths,Players Killed, KILLENTITY_KEYS*'
+  player_list.each do |user|
+    request_uri = USER_URI_TEMPLATE.gsub("UUID", user['uuid'])
+    url = "#{request_uri}"
+
+    row = []
+    begin
+      buffer = open(url).read
+      result = JSON.parse(buffer)
+       row << "#{user['name']}"
+       row << '0'
+
+        travel_total = 0
+        TRAVEL_KEYS.each do |key|
+          key_travel_total = result[key].to_i
+          travel_total += key_travel_total
+          row << "#{key_travel_total}"
+        end
+
+        row = row.flatten
+        row[1] = travel_total
+        rows << row
+
+    rescue 
+      #sometimes there is no matching json file.
+    end
+  end
+
+  content = travel_stats_table(rows)
+
+  File.open('travel.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
+end
+
+player_list = get_player_list
+
 # puts "GENERATING KILL STATS PAGE..."
 # generate_kill_stats(player_list)
 # puts "FINISHED GENERATING KILL STATS PAGE..."
 
-#puts "GENERATING ADVENTURING TIME PAGE..."
-#generate_adventuring_time(player_list)
-#puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
+# puts "GENERATING ADVENTURING TIME PAGE..."
+# generate_adventuring_time(player_list)
+# puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
 
-puts "GENERATING ACHIEVEMENTS PAGE..."
-generate_achievements(player_list)
-puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
+# puts "GENERATING ACHIEVEMENTS PAGE..."
+# generate_achievements(player_list)
+# puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
 
+puts "GENERATING TRAVEL PAGE..."
+generate_travel_stats(player_list)
+puts "FINISHED GENERATING TRAVEL PAGE..."
 

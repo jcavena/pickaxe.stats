@@ -1,5 +1,5 @@
 
-def humanize secs
+def humanize_time secs
   #[[60, :seconds], [60, :minutes], [24, :hours], [1000, :days]].map{ |count, name|
   [[60, ''], [60, ':'], [24, ':'], [1000, ' days ']].map{ |count, name|
     if secs > 0
@@ -13,6 +13,10 @@ def humanize secs
   }.compact.reverse.join('')
 end
 
+def humanize_distance cms
+
+  '%.2f km' % (cms.to_f*0.00001)
+end
 
 def kill_stats_table(rows)
   snippet = <<-EOF
@@ -39,7 +43,7 @@ def kill_stats_table(rows)
       <tr>
         <td data-sort="#{row[0].downcase}"><div class="head-skins" data-player="#{row[0]}"></div></td>
         <td>#{row[0]}</td>
-        <td data-sort='#{row[1]}'>#{humanize(row[1].to_i)}</td>
+        <td data-sort='#{row[1]}'>#{humanize_time(row[1].to_i)}</td>
         <td>#{row[2]}</td>
         <td>#{row[3]}</td>
     EOF
@@ -59,7 +63,7 @@ def kill_stats_table(rows)
 end
 
 def travel_stats_table(rows)
-  snippet = <<-EOF
+    snippet = <<-EOF
     <h3 style="margin-top:0px;">Travel Stats</h3>
     <table id="stats" class="table table-striped table-bordered" cellspacing="0" width="100%" data-page-length='100'>
       <thead>
@@ -67,11 +71,9 @@ def travel_stats_table(rows)
           <th>Avatar</th>
           <th>Name</th>
           <th>Total Distance</th>
-          <th>Deaths</th>
-          <th>Players Killed</th>
     EOF
-    KILLENTITY_KEYS.each do |key|
-      snippet += "<th>#{key.split('.').last.gsub(/entity/i,'')}</th>"
+    TRAVEL_KEYS.each do |key|
+      snippet += "<th>#{key.split('.').last.gsub(/onecm/i,'').capitalize}</th>"
     end
     snippet += <<-EOF
         </tr>
@@ -83,12 +85,10 @@ def travel_stats_table(rows)
       <tr>
         <td data-sort="#{row[0].downcase}"><div class="head-skins" data-player="#{row[0]}"></div></td>
         <td>#{row[0]}</td>
-        <td data-sort='#{row[1]}'>#{humanize(row[1].to_i)}</td>
-        <td>#{row[2]}</td>
-        <td>#{row[3]}</td>
+        <td data-sort='#{row[1]}'>#{humanize_distance row[1].to_i}</td>
     EOF
-    4.upto(row.length - 1) do |index|
-      snippet += "<td>#{row[index]}</td>"
+    2.upto(row.length - 1) do |index|
+      snippet += "<td data-sort='#{row[index]}'>#{humanize_distance row[index]}</td>"
     end
     snippet += <<-EOF        
       </tr>

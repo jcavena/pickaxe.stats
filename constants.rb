@@ -126,3 +126,19 @@ KILLENTITY_KEYS = [
   'stat.killEntity.Wolf',
   'stat.killEntity.Zombie'
 ]
+
+TRAVEL_KEYS = [
+  'stat.boatOneCm',
+  'stat.climbOneCm',
+  'stat.crouchOneCm',
+  'stat.diveOneCm',
+  'stat.fallOneCm',
+  'stat.flyOneCm',
+  'stat.horseOneCm',
+  'stat.minecartOneCm',
+  'stat.pigOneCm',
+  'stat.sprintOneCm',
+  'stat.swimOneCm',
+  'stat.walkOneCm'
+]
+
