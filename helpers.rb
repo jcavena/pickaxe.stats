@@ -15,7 +15,8 @@ end
 
 
 def generate_html(rows)
-  html_header + html_body(rows)
+  #html_header + html_body(rows)
+  html_table(rows)
 end
 
 
@@ -62,7 +63,7 @@ end
 
 def html_table(rows)
   snippet = <<-EOF
-    <table id="killer_stats" class="display" cellspacing="0" width="100%" data-page-length='100'>
+    <table id="killer_stats" class="table table-striped table-bordered" cellspacing="0" width="100%" data-page-length='100'>
       <thead>
         <tr>
           <th>Avatar</th>

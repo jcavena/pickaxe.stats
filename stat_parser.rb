@@ -1,6 +1,6 @@
 #mode = 'adventuring_time'
 #mode = 'player_stats.csv'
-mode = 'player_stats.html'
+mode = 'index.html'
 
 
 # http://ruby-doc.org/stdlib-2.0.0/libdoc/open-uri/rdoc/OpenURI.html 
@@ -28,7 +28,6 @@ buffer = open(url).read
 result = JSON.parse(buffer).sort_by{|hash| hash['name'].downcase}
 
 # Loop through each of the elements in the 'result' Array & print some of their attributes.
-#Haml::Engine.new(snippet.strip_heredoc).render
 if mode == 'player_stats.csv'
   # CSV friendly version. Just printing to console and saving manually. Should just save to csv file instead.
     
@@ -81,7 +80,9 @@ if mode == 'adventuring_time'
   end
 end
 
-if mode == 'player_stats.html'
+template = File.open('template.html').read
+
+if mode == 'index.html'
   # GENERATE STATS IN HTML
   rows = []
 
@@ -112,8 +113,9 @@ if mode == 'player_stats.html'
     end
   end
 
-  contents = generate_html(rows)
-  File.open('index.html', 'w'){ |file| file.write contents}
+  content = generate_html(rows)
+
+  File.open('index.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
 end
 
 
