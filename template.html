@@ -152,13 +152,15 @@
     </body>
     <script>
       $(document).ready(function(){
-        $(".head-skins").skinPreview({
-          scale: 4, 
-          head: true
-        });
-        
-        $('#killer_stats').DataTable();
-        
+        if ($(".head-skins").length > 0){
+          $(".head-skins").skinPreview({
+            scale: 4, 
+            head: true
+          });
+        }
+        if ($('#stats').length > 0) {
+          $('#stats').DataTable();
+        }
       });
     </script>
   </html>

@@ -1,3 +1,8 @@
+# Construct the URL we'll be calling
+USER_CACHE_URI = 'https://raw.githubusercontent.com/qrush/pickaxe.club/master/usercache.json'
+USER_URI_TEMPLATE = 'https://raw.githubusercontent.com/qrush/pickaxe.club/master/world/stats/UUID.json'
+
+
 BIOMES = [
   "Desert",
   "Taiga",

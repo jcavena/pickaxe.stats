@@ -14,57 +14,10 @@ def humanize secs
 end
 
 
-def generate_html(rows)
-  #html_header + html_body(rows)
-  html_table(rows)
-end
-
-
-def html_header
+def kill_stats_table(rows)
   snippet = <<-EOF
-<!doctype html>
-  <html>
-    <head>
-      <title>Pickaxe.club Killer Stats!</title>
-      <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css">
-      <style>
-        body{
-          font-family: arial,sans-serif;
-          font-size: .8em;
-        }
-        
-      </style>
-      <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
-      <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
-      <script type="text/javascript" language="javascript" src="skinpreview.js"></script>
-    </head>
-  EOF
-end
-
-def html_body(rows)
-  snippet = <<-EOF
-    <body>
-      #{html_table(rows)}
-    </body>
-    <script>
-      $(document).ready(function(){
-        $(".head-skins").skinPreview({
-          scale: 4, 
-          head: true
-        });
-        
-        $('#killer_stats').DataTable();
-        
-      });
-    </script>
-  </html>
-  EOF
-end
-
-def html_table(rows)
-  snippet = <<-EOF
-    <h3 style="margin-top:0px;">Killer Stats</h3>
-    <table id="killer_stats" class="table table-striped table-bordered" cellspacing="0" width="100%" data-page-length='100'>
+    <h3 style="margin-top:0px;">Kill Stats</h3>
+    <table id="stats" class="table table-striped table-bordered" cellspacing="0" width="100%" data-page-length='100'>
       <thead>
         <tr>
           <th>Avatar</th>
@@ -105,3 +58,83 @@ def html_table(rows)
   
 end
 
+def travel_stats_table(rows)
+  snippet = <<-EOF
+    <h3 style="margin-top:0px;">Travel Stats</h3>
+    <table id="stats" class="table table-striped table-bordered" cellspacing="0" width="100%" data-page-length='100'>
+      <thead>
+        <tr>
+          <th>Avatar</th>
+          <th>Name</th>
+          <th>Time Played</th>
+          <th>Deaths</th>
+          <th>Players Killed</th>
+    EOF
+    KILLENTITY_KEYS.each do |key|
+      snippet += "<th>#{key.split('.').last.gsub(/entity/i,'')}</th>"
+    end
+    snippet += <<-EOF
+        </tr>
+      </thead>
+      <tbody>
+    EOF
+  rows.each do |row|
+    snippet += <<-EOF
+      <tr>
+        <td data-sort="#{row[0].downcase}"><div class="head-skins" data-player="#{row[0]}"></div></td>
+        <td>#{row[0]}</td>
+        <td data-sort='#{row[1]}'>#{humanize(row[1].to_i)}</td>
+        <td>#{row[2]}</td>
+        <td>#{row[3]}</td>
+    EOF
+    4.upto(row.length - 1) do |index|
+      snippet += "<td>#{row[index]}</td>"
+    end
+    snippet += <<-EOF        
+      </tr>
+    EOF
+  end
+
+  snippet += <<-EOF
+      </tbody>
+    </table>
+  EOF
+  
+end
+
+def adventuring_time_table(rows)
+  snippet = <<-EOF
+    <h3 style="margin-top:0px;">Adventuring Time</h3>
+    <table class="table table-striped table-bordered" cellspacing="0" width="100%" data-page-length='100'>
+      <thead>
+        <tr>
+          <th rowspan="2">Avatar</th>
+          <th rowspan="2">Name</th>
+          <th rowspan="2">Adventuring Time</th>
+          <th>Visited</th>
+        </tr>
+        <tr>
+          <th>Remaining</th>
+        </tr>
+      </thead>
+      <tbody>
+    EOF
+  rows.each do |row|
+    snippet += <<-EOF
+      <tr>
+        <td rowspan="2"><div class="head-skins" data-player="#{row[0]}"></div></td>
+        <td rowspan="2">#{row[0]}</td>
+        <td rowspan="2" class="#{row[1] == 'Yes' ? 'success' : ''}">#{row[1]}</td>
+        <td>#{row[2]}</td>
+      </tr>
+      <tr>
+        <td>#{row[3]}</td>
+      </tr>
+    EOF
+  end
+  snippet += <<-EOF
+      </tbody>
+    </table>        
+  EOF
+  
+end
