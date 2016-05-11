@@ -122,7 +122,7 @@ def adventuring_time_table(rows)
   rows.each do |row|
     snippet += <<-EOF
       <tr>
-        <td rowspan="2"><div class="head-skins" data-player="#{row[0]}"></div></td>
+        <td rowspan="2"><div class="scale-skins scale-3" data-player="#{row[0]}"></div></td>
         <td rowspan="2">#{row[0]}</td>
         <td rowspan="2" class="#{row[1] == 'Yes' ? 'success' : ''}">#{row[1]}</td>
         <td>#{row[2]}</td>

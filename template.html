@@ -152,15 +152,21 @@
     </body>
     <script>
       $(document).ready(function(){
-        if ($(".head-skins").length > 0){
-          $(".head-skins").skinPreview({
-            scale: 4, 
-            head: true
-          });
-        }
+        $(".head-skins").skinPreview({
+          scale: 4, 
+          head: true
+        });
+        $(".scale-1").skinPreview({scale: 1});
+        $(".scale-2").skinPreview({scale: 2});
+        $(".scale-3").skinPreview({scale: 3});
+        $(".scale-4").skinPreview({scale: 4});
+        $(".scale-5").skinPreview({scale: 5});
+        $(".scale-6").skinPreview({scale: 6});
+
         if ($('#stats').length > 0) {
           $('#stats').DataTable();
         }
+
       });
     </script>
   </html>
