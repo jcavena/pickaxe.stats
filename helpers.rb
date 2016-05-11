@@ -66,7 +66,7 @@ def travel_stats_table(rows)
         <tr>
           <th>Avatar</th>
           <th>Name</th>
-          <th>Time Played</th>
+          <th>Total Distance</th>
           <th>Deaths</th>
           <th>Players Killed</th>
     EOF
@@ -110,7 +110,7 @@ def adventuring_time_table(rows)
         <tr>
           <th rowspan="2">Avatar</th>
           <th rowspan="2">Name</th>
-          <th rowspan="2">Adventuring Time</th>
+          <th rowspan="2">Completed</th>
           <th>Visited</th>
         </tr>
         <tr>
