@@ -103,13 +103,53 @@ def generate_adventuring_time(player_list)
   
 end
 
-puts "GENERATING KILL STATS PAGE..."
-generate_kill_stats(player_list)
-puts "FINISHED GENERATING KILL STATS PAGE..."
+def generate_achievements(player_list)
+  template = File.open('template.html').read
+  rows = []
+  # ACHIEVEMENTS LIST
+  player_list.sample(25).each do |user|
+    url = USER_URI_TEMPLATE.gsub("UUID", user['uuid'])
+    row = []
+    begin
+      buffer = open(url).read
+      result = JSON.parse(buffer)
+      completed_achievements = []
+      remaining_achievements = []
+      ACHIEVEMENT_KEYS.each do |achievement|
+        if achievement == 'achievement.exploreAllBiomes' 
+          if result[achievement]['value'].to_s == "1"
+            completed_achievements << achievement
+          end
+        elsif result[achievement] && result[achievement].to_i > 0
+          completed_achievements << achievement
+        end
+      end
+      remaining_achievements = (ACHIEVEMENT_KEYS - completed_achievements)
+      row = ["#{user['name']}",
+              "#{completed_achievements.map{|a| a.split('.').last}.sort.join(", ")}",
+              "#{remaining_achievements.map{|a| a.split('.').last}.sort.join(", ")}"
+              ]
+      rows << row
+    #rescue 
+      #no matching stats file
+    end
+  end
+  content = achievements_table(rows)
 
-puts "GENERATING ADVENTURING TIME PAGE..."
-generate_adventuring_time(player_list)
-puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
+  File.open('achievements.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
+  
+end
 
+# puts "GENERATING KILL STATS PAGE..."
+# generate_kill_stats(player_list)
+# puts "FINISHED GENERATING KILL STATS PAGE..."
+
+#puts "GENERATING ADVENTURING TIME PAGE..."
+#generate_adventuring_time(player_list)
+#puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
+
+puts "GENERATING ACHIEVEMENTS PAGE..."
+generate_achievements(player_list)
+puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
 
 

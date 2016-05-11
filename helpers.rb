@@ -136,5 +136,40 @@ def adventuring_time_table(rows)
       </tbody>
     </table>        
   EOF
-  
+end
+
+def achievements_table(rows)
+  snippet = <<-EOF
+    <h3 style="margin-top:0px;">Achievements</h3>
+    <table class="table table-striped table-bordered" cellspacing="0" width="100%" data-page-length='100'>
+      <thead>
+        <tr>
+          <th rowspan="2">Avatar</th>
+          <th rowspan="2">Name</th>
+          <th rowspan="2">Completed</th>
+          <th>Completed</th>
+        </tr>
+        <tr>
+          <th>Remaining</th>
+        </tr>
+      </thead>
+      <tbody>
+    EOF
+  rows.each do |row|
+    snippet += <<-EOF
+      <tr>
+        <td rowspan="2"><div class="scale-skins scale-3" data-player="#{row[0]}"></div></td>
+        <td rowspan="2">#{row[0]}</td>
+        <td rowspan="2" class="#{row[2] == '' ? 'success' : ''}">#{row[2] == '' ? 'Yes' : 'No'}</td>
+        <td>#{row[1]}</td>
+      </tr>
+      <tr>
+        <td>#{row[2]}</td>
+      </tr>
+    EOF
+  end
+  snippet += <<-EOF
+      </tbody>
+    </table>        
+  EOF
 end
