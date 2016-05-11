@@ -78,6 +78,7 @@ end
 def generate_adventuring_time(player_list)
   template = File.open('template.html').read
   rows = []
+  biomes_denominator = ADVENTURING_TIME_BIOMES.length.to_f
   # BIOMES MISSING FOR ADVENTURING TIME ACHIEVEMENT
   player_list.each do |user|
     url = USER_URI_TEMPLATE.gsub("UUID", user['uuid'])
@@ -86,11 +87,13 @@ def generate_adventuring_time(player_list)
       buffer = open(url).read
       result = JSON.parse(buffer)
       adventuring_time = result['achievement.exploreAllBiomes']['value'].to_s == "1"
+      explored_adventuring_time_biomes = result['achievement.exploreAllBiomes']['progress'] & ADVENTURING_TIME_BIOMES
 
       row = ["#{user['name']}",
               "#{adventuring_time ? "Yes" : "No"}",
               "#{result['achievement.exploreAllBiomes']['progress'].sort.join(", ")}",
-              "#{(BIOMES - result['achievement.exploreAllBiomes']['progress']).sort.join(", ")}"
+              "#{(ADVENTURING_TIME_BIOMES - explored_adventuring_time_biomes).sort.join(", ")}",
+              explored_adventuring_time_biomes.length.to_f / biomes_denominator
               ]
       rows << row
     rescue 
@@ -181,19 +184,19 @@ end
 
 player_list = get_player_list
 
-puts "GENERATING KILL STATS PAGE..."
-generate_kill_stats(player_list)
-puts "FINISHED GENERATING KILL STATS PAGE..."
+# puts "GENERATING KILL STATS PAGE..."
+# generate_kill_stats(player_list)
+# puts "FINISHED GENERATING KILL STATS PAGE..."
 
 puts "GENERATING ADVENTURING TIME PAGE..."
 generate_adventuring_time(player_list)
 puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
 
-puts "GENERATING ACHIEVEMENTS PAGE..."
-generate_achievements(player_list)
-puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
+# puts "GENERATING ACHIEVEMENTS PAGE..."
+# generate_achievements(player_list)
+# puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
 
-puts "GENERATING TRAVEL PAGE..."
-generate_travel_stats(player_list)
-puts "FINISHED GENERATING TRAVEL PAGE..."
+# puts "GENERATING TRAVEL PAGE..."
+# generate_travel_stats(player_list)
+# puts "FINISHED GENERATING TRAVEL PAGE..."
 

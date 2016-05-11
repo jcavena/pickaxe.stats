@@ -63,23 +63,23 @@ def kill_stats_table(rows)
 end
 
 def travel_stats_table(rows)
-    snippet = <<-EOF
-    <h3 style="margin-top:0px;">Travel Stats</h3>
-    <table id="stats" class="table table-striped table-bordered" cellspacing="0" width="100%" data-page-length='100'>
-      <thead>
-        <tr>
-          <th>Avatar</th>
-          <th>Name</th>
-          <th>Total Distance</th>
-    EOF
-    TRAVEL_KEYS.each do |key|
-      snippet += "<th>#{key.split('.').last.gsub(/onecm/i,'').capitalize}</th>"
-    end
-    snippet += <<-EOF
-        </tr>
-      </thead>
-      <tbody>
-    EOF
+  snippet = <<-EOF
+  <h3 style="margin-top:0px;">Travel Stats</h3>
+  <table id="stats" class="table table-striped table-bordered" cellspacing="0" width="100%" data-page-length='100'>
+    <thead>
+      <tr>
+        <th>Avatar</th>
+        <th>Name</th>
+        <th>Total Distance</th>
+  EOF
+  TRAVEL_KEYS.each do |key|
+    snippet += "<th>#{key.split('.').last.gsub(/onecm/i,'').capitalize}</th>"
+  end
+  snippet += <<-EOF
+      </tr>
+    </thead>
+    <tbody>
+  EOF
   rows.each do |row|
     snippet += <<-EOF
       <tr>
@@ -105,16 +105,13 @@ end
 def adventuring_time_table(rows)
   snippet = <<-EOF
     <h3 style="margin-top:0px;">Adventuring Time</h3>
-    <table class="table table-striped table-bordered" cellspacing="0" width="100%" data-page-length='100'>
+    <table id="stats" class="table table-striped table-bordered" cellspacing="0" width="100%" data-page-length='100'>
       <thead>
         <tr>
-          <th rowspan="2">Avatar</th>
-          <th rowspan="2">Name</th>
-          <th rowspan="2">Completed</th>
-          <th>Visited</th>
-        </tr>
-        <tr>
-          <th>Remaining</th>
+          <th>Avatar</th>
+          <th>Name</th>
+          <th>Completed</th>
+          <th>Visited / <span class="danger">Remaining</span></th>
         </tr>
       </thead>
       <tbody>
@@ -122,15 +119,22 @@ def adventuring_time_table(rows)
   rows.each do |row|
     snippet += <<-EOF
       <tr>
-        <td rowspan="2"><div class="scale-skins scale-3" data-player="#{row[0]}"></div></td>
-        <td rowspan="2">#{row[0]}</td>
-        <td rowspan="2" class="#{row[1] == 'Yes' ? 'success' : ''}">#{row[1]}</td>
-        <td>#{row[2]}</td>
-      </tr>
-      <tr>
-        <td>#{row[3]}</td>
-      </tr>
+        <td data-sort="#{row[0].downcase}"><div class="scale-skins scale-3" data-player="#{row[0]}"></div></td>
+        <td>#{row[0]}</td>
+        <td data-sort="#{row[4]}" class="#{row[1] == 'Yes' ? 'success' : ''}">#{row[1]} - #{(row[4].to_f * 100).to_i}%</td>
+        <td data-sort="#{row[4]}" style="padding:4;vertical-align:middle;">
     EOF
+    if row[2] != ''
+      snippet += <<-EOF
+        <p class="bg-success" style="padding:10px;">#{row[2]}</p>
+      EOF
+    end
+    if row[3] != ''
+      snippet += <<-EOF
+        <p class="bg-danger" style="padding:10px;margin-bottom:0;">#{row[3]}</p></span></td>
+      EOF
+    end
+    snippet += "</tr>"
   end
   snippet += <<-EOF
       </tbody>
