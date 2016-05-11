@@ -28,6 +28,7 @@ def kill_stats_table(rows)
           <th>Name</th>
           <th>Time Played</th>
           <th>Deaths</th>
+          <th>Avg TTL</th>
           <th>Players Killed</th>
     EOF
     KILLENTITY_KEYS.each do |key|
@@ -45,9 +46,10 @@ def kill_stats_table(rows)
         <td>#{row[0]}</td>
         <td data-sort='#{row[1]}'>#{humanize_time(row[1].to_i)}</td>
         <td>#{row[2]}</td>
-        <td>#{row[3]}</td>
+        <td data-sort='#{row[3]}'>#{humanize_time(row[3].to_i)}</td>
+        <td>#{row[4]}</td>
     EOF
-    4.upto(row.length - 1) do |index|
+    5.upto(row.length - 1) do |index|
       snippet += "<td>#{row[index]}</td>"
     end
     snippet += <<-EOF        

@@ -140,7 +140,6 @@ KILLENTITY_KEYS = [
   'stat.killEntity.CaveSpider',
   'stat.killEntity.Chicken',
   'stat.killEntity.Cow',
-  'achievement.killCow',
   'stat.killEntity.Creeper',
   'stat.killEntity.Enderman',
   'stat.killEntity.Endermite',

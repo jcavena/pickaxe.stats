@@ -43,7 +43,6 @@ end
 def generate_kill_stats(player_list)
   template = File.open('template.html').read
   #GENERATE KILL STATS PAGE (index.html)
-  
   rows = []
   
   #'Name,Time Killed,Deaths,Players Killed, KILLENTITY_KEYS*'
@@ -55,16 +54,16 @@ def generate_kill_stats(player_list)
     begin
       buffer = open(url).read
       result = JSON.parse(buffer)
-       row << ["#{user['name']}",
+      row << ["#{user['name']}",
                 "#{result['stat.playOneMinute'].to_i / 20}",
                 "#{result['stat.deaths'].to_i }",
+                "#{(result['stat.playOneMinute'].to_i / 20) / (result['stat.deaths'].to_i + 1)}",
                 "#{result['stat.playerKills'].to_i}"]
+      KILLENTITY_KEYS.each do |key|
+        row << "#{result[key].to_i}"
+      end
 
-        KILLENTITY_KEYS.each do |key|
-          row << "#{result[key].to_i}"
-        end
-
-        rows << row.flatten
+      rows << row.flatten
     rescue 
       #sometimes there is no matching json file.
     end
@@ -184,13 +183,13 @@ end
 
 player_list = get_player_list
 
-# puts "GENERATING KILL STATS PAGE..."
-# generate_kill_stats(player_list)
-# puts "FINISHED GENERATING KILL STATS PAGE..."
+puts "GENERATING KILL STATS PAGE..."
+generate_kill_stats(player_list)
+puts "FINISHED GENERATING KILL STATS PAGE..."
 
-puts "GENERATING ADVENTURING TIME PAGE..."
-generate_adventuring_time(player_list)
-puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
+# puts "GENERATING ADVENTURING TIME PAGE..."
+# generate_adventuring_time(player_list)
+# puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
 
 # puts "GENERATING ACHIEVEMENTS PAGE..."
 # generate_achievements(player_list)
