@@ -63,6 +63,7 @@ end
 
 def html_table(rows)
   snippet = <<-EOF
+    <h3 style="margin-top:0px;">Killer Stats</h3>
     <table id="killer_stats" class="table table-striped table-bordered" cellspacing="0" width="100%" data-page-length='100'>
       <thead>
         <tr>
