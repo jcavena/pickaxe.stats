@@ -107,7 +107,7 @@ def generate_achievements(player_list)
   template = File.open('template.html').read
   rows = []
   # ACHIEVEMENTS LIST
-  player_list.sample(25).each do |user|
+  player_list.each do |user|
     url = USER_URI_TEMPLATE.gsub("UUID", user['uuid'])
     row = []
     begin
@@ -130,7 +130,7 @@ def generate_achievements(player_list)
               "#{remaining_achievements.map{|a| a.split('.').last}.sort.join(", ")}"
               ]
       rows << row
-    #rescue 
+    rescue 
       #no matching stats file
     end
   end
