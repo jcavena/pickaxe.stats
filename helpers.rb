@@ -147,16 +147,13 @@ end
 def achievements_table(rows)
   snippet = <<-EOF
     <h3 style="margin-top:0px;">Achievements</h3>
-    <table class="table table-striped table-bordered" cellspacing="0" width="100%" data-page-length='100'>
+    <table id="stats" class="table table-striped table-bordered" cellspacing="0" width="100%" data-page-length='100'>
       <thead>
         <tr>
-          <th rowspan="2">Avatar</th>
-          <th rowspan="2">Name</th>
-          <th rowspan="2">Completed</th>
+          <th>Avatar</th>
+          <th>Name</th>
           <th>Completed</th>
-        </tr>
-        <tr>
-          <th>Remaining</th>
+          <th>Completed / Remaining</th>
         </tr>
       </thead>
       <tbody>
@@ -164,15 +161,22 @@ def achievements_table(rows)
   rows.each do |row|
     snippet += <<-EOF
       <tr>
-        <td rowspan="2"><div class="scale-skins scale-3" data-player="#{row[0]}"></div></td>
-        <td rowspan="2">#{row[0]}</td>
-        <td rowspan="2" class="#{row[2] == '' ? 'success' : ''}">#{row[2] == '' ? 'Yes' : 'No'}</td>
-        <td>#{row[1]}</td>
-      </tr>
-      <tr>
-        <td>#{row[2]}</td>
-      </tr>
+        <td data-sort="#{row[0].downcase}"><div class="scale-skins scale-3" data-player="#{row[0]}"></div></td>
+        <td>#{row[0]}</td>
+        <td data-sort="#{row[3]}" class="#{row[2] == '' ? 'success' : ''}">#{row[2] == '' ? 'Yes' : 'No'} - #{(row[3].to_f * 100).to_i}%</td>
+        <td data-sort="#{row[3]}" style="padding:4;vertical-align:middle;">
     EOF
+    if row[1] != ''
+      snippet += <<-EOF
+        <p class="bg-success" style="padding:10px;">#{row[1]}</p>
+      EOF
+    end
+    if row[2] != ''
+      snippet += <<-EOF
+        <p class="bg-danger" style="padding:10px;margin-bottom:0;">#{row[2]}</p></span></td>
+      EOF
+    end
+    snippet += "</tr>"
   end
   snippet += <<-EOF
       </tbody>

@@ -78,7 +78,7 @@ def generate_adventuring_time(player_list)
   template = File.open('template.html').read
   rows = []
   biomes_denominator = ADVENTURING_TIME_BIOMES.length.to_f
-  # BIOMES MISSING FOR ADVENTURING TIME ACHIEVEMENT
+  
   player_list.each do |user|
     url = USER_URI_TEMPLATE.gsub("UUID", user['uuid'])
     row = []
@@ -108,7 +108,8 @@ end
 def generate_achievements(player_list)
   template = File.open('template.html').read
   rows = []
-  # ACHIEVEMENTS LIST
+  achivements_denominator = ACHIEVEMENTS.length.to_f
+  
   player_list.each do |user|
     url = USER_URI_TEMPLATE.gsub("UUID", user['uuid'])
     row = []
@@ -117,7 +118,7 @@ def generate_achievements(player_list)
       result = JSON.parse(buffer)
       completed_achievements = []
       remaining_achievements = []
-      ACHIEVEMENT_KEYS.each do |achievement|
+      ACHIEVEMENTS.keys.each do |achievement|
         if achievement == 'achievement.exploreAllBiomes' 
           if result[achievement]['value'].to_s == "1"
             completed_achievements << achievement
@@ -126,10 +127,11 @@ def generate_achievements(player_list)
           completed_achievements << achievement
         end
       end
-      remaining_achievements = (ACHIEVEMENT_KEYS - completed_achievements)
+      remaining_achievements = (ACHIEVEMENTS.keys - completed_achievements)
       row = ["#{user['name']}",
-              "#{completed_achievements.map{|a| a.split('.').last}.sort.join(", ")}",
-              "#{remaining_achievements.map{|a| a.split('.').last}.sort.join(", ")}"
+              "#{completed_achievements.map{|key| ACHIEVEMENTS[key]}.join(", ")}",
+              "#{remaining_achievements.map{|key| ACHIEVEMENTS[key]}.join(", ")}",
+              "#{completed_achievements.length.to_f / achivements_denominator}"
               ]
       rows << row
     rescue 
@@ -183,17 +185,17 @@ end
 
 player_list = get_player_list
 
-puts "GENERATING KILL STATS PAGE..."
-generate_kill_stats(player_list)
-puts "FINISHED GENERATING KILL STATS PAGE..."
+# puts "GENERATING KILL STATS PAGE..."
+# generate_kill_stats(player_list)
+# puts "FINISHED GENERATING KILL STATS PAGE..."
 
 # puts "GENERATING ADVENTURING TIME PAGE..."
 # generate_adventuring_time(player_list)
 # puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
 
-# puts "GENERATING ACHIEVEMENTS PAGE..."
-# generate_achievements(player_list)
-# puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
+puts "GENERATING ACHIEVEMENTS PAGE..."
+generate_achievements(player_list)
+puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
 
 # puts "GENERATING TRAVEL PAGE..."
 # generate_travel_stats(player_list)
