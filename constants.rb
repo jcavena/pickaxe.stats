@@ -2,6 +2,54 @@
 USER_CACHE_URI = 'https://raw.githubusercontent.com/qrush/pickaxe.club/master/usercache.json'
 USER_URI_TEMPLATE = 'https://raw.githubusercontent.com/qrush/pickaxe.club/master/world/stats/UUID.json'
 
+MANUALLY_USED_KEYS = [
+  'stat.playOneMinute',
+  'stat.damageDealt',
+  'stat.damageTaken',
+  'stat.deaths',
+  'stat.playOneMinute',
+  'stat.playerKills'
+]
+
+GENERAL_STATS_KEYS = [
+  'stat.playOneMinute',
+  'stat.animalsBred',
+  'stat.bannerCleaned',
+  'stat.beaconInteraction',
+  'stat.brewingstandInteraction',
+  'stat.cakeSlicesEaten',
+  'stat.cauldronFilled',
+  'stat.cauldronUsed',
+  'stat.chestOpened',
+  'stat.damageDealt',
+  'stat.damageTaken',
+  'stat.deaths',
+  'stat.playerKills',
+  'stat.dispenserInspected',
+  'stat.drop',
+  'stat.dropperInspected',
+  'stat.enderchestOpened',
+  'stat.fishCaught',
+  'stat.flowerPotted',
+  'stat.furnaceInteraction',
+  'stat.hopperInspected',
+  'stat.itemEnchanted',
+  'stat.jump',
+  'stat.junkFished',
+  'stat.leaveGame',
+  'stat.mobKills',
+  'stat.noteblockPlayed',
+  'stat.noteblockTuned',
+  'stat.recordPlayed',
+  'stat.sleepInBed',
+  'stat.sneakTime',
+  'stat.talkedToVillager',
+  'stat.timeSinceDeath',
+  'stat.tradedWithVillager',
+  'stat.trappedChestTriggered',
+  'stat.treasureFished'
+]
+
 BIOMES = [
   "Beach",
   "Birch Forest",
@@ -239,6 +287,7 @@ TRAVEL_KEYS = [
 ]
 
 CRAFTING_KEYS = [
+  'stat.craftingTableInteraction',
   'stat.craftItem.minecraft.acacia_boat',
   'stat.craftItem.minecraft.acacia_door',
   'stat.craftItem.minecraft.acacia_fence',

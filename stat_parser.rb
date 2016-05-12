@@ -42,10 +42,8 @@ end
 
 def generate_kill_stats(player_list)
   template = File.open('template.html').read
-  #GENERATE KILL STATS PAGE (index.html)
   rows = []
   
-  #'Name,Time Killed,Deaths,Players Killed, KILLENTITY_KEYS*'
   player_list.each do |user|
     request_uri = USER_URI_TEMPLATE.gsub("UUID", user['uuid'])
     url = "#{request_uri}"
@@ -56,6 +54,8 @@ def generate_kill_stats(player_list)
       result = JSON.parse(buffer)
       row << ["#{user['name']}",
                 "#{result['stat.playOneMinute'].to_i / 20}",
+                "#{result['stat.damageDealt'].to_i}",
+                "#{result['stat.damageTaken'].to_i}",
                 "#{result['stat.deaths'].to_i }",
                 "#{(result['stat.playOneMinute'].to_i / 20) / (result['stat.deaths'].to_i + 1)}",
                 "#{result['stat.playerKills'].to_i}"]
@@ -74,7 +74,7 @@ def generate_kill_stats(player_list)
 
   content = kill_stats_table(rows)
 
-  File.open('index.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
+  File.open('kills.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
 end
 
 def generate_adventuring_time(player_list)
@@ -183,11 +183,41 @@ def generate_travel_stats(player_list)
   File.open('travel.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
 end
 
+def generate_general_stats(player_list)
+  template = File.open('template.html').read
+  rows = []
+  
+  player_list.each do |user|
+    request_uri = USER_URI_TEMPLATE.gsub("UUID", user['uuid'])
+    url = "#{request_uri}"
+
+    row = []
+    begin
+      buffer = open(url).read
+      result = JSON.parse(buffer)
+      row << "#{user['name']}"
+      GENERAL_STATS_KEYS.each do |key|
+        if key == 'stat.playOneMinute'
+          row << "#{result['stat.playOneMinute'].to_i / 20}"
+        else
+          row << "#{result[key].to_i}"
+        end
+      end
+      rows << row.flatten
+    rescue 
+      #sometimes there is no matching json file.
+    end
+  end
+
+  content = general_stats_table(rows)
+
+  File.open('index.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
+end
+
 def generate_crafting_stats(player_list)
   template = File.open('template.html').read
   rows = []
   
-  #'Name,Time Killed,Deaths,Players Killed, KILLENTITY_KEYS*'
   player_list.each do |user|
     request_uri = USER_URI_TEMPLATE.gsub("UUID", user['uuid'])
     url = "#{request_uri}"
@@ -202,7 +232,7 @@ def generate_crafting_stats(player_list)
         crafted_total = 0
         CRAFTING_KEYS.each do |key|
           crafted_amount = result[key].to_i
-          crafted_total += crafted_amount
+          crafted_total += crafted_amount unless key == 'stat.craftingTableInteraction'
           row << "#{crafted_amount}"
         end
 
@@ -223,7 +253,6 @@ def generate_mining_stats(player_list)
   template = File.open('template.html').read
   rows = []
   
-  #'Name,Time Killed,Deaths,Players Killed, KILLENTITY_KEYS*'
   player_list.each do |user|
     request_uri = USER_URI_TEMPLATE.gsub("UUID", user['uuid'])
     url = "#{request_uri}"
@@ -277,6 +306,10 @@ player_list = get_player_list
 # generate_crafting_stats(player_list)
 # puts "FINISHED GENERATING CRAFTING PAGE..."
 
-puts "GENERATING MINING PAGE..."
-generate_mining_stats(player_list)
-puts "FINISHED GENERATING MINING PAGE..."
+# puts "GENERATING MINING PAGE..."
+# generate_mining_stats(player_list)
+# puts "FINISHED GENERATING MINING PAGE..."
+
+puts "GENERATING GENERAL STATS PAGE..."
+generate_general_stats(player_list)
+puts "FINISHED GENERATING GENERAL STATS PAGE..."

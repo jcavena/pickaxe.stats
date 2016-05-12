@@ -30,14 +30,16 @@ def kill_stats_table(rows)
           <th>Avatar</th>
           <th>Name</th>
           <th>Time Played</th>
+          <th>Damage Dealt</th>
+          <th>Damage Taken</th>
           <th>Deaths</th>
           <th>Avg TTL</th>
           <th>Players Killed</th>
     EOF
     KILLENTITY_KEYS.each do |key|
-      snippet += "<th>#{key.split('.').last.gsub(/entity/i,'')}</th>"
+      snippet += "<th>#{key.split('.').last.gsub(/entity/i,'').split(/(?=[A-Z])/).map(&:capitalize).join(' ')}</th>"
       if KILLEDBY_KEYS.include? key.gsub('killEntity','entityKilledBy')
-        snippet += "<th>Killed by #{key.split('.').last.gsub(/entity/i,'')}</th>"
+        snippet += "<th>Killed by #{key.split('.').last.gsub(/entity/i,'').split(/(?=[A-Z])/).map(&:capitalize).join(' ')}</th>"
       end
     end
     snippet += <<-EOF
@@ -51,11 +53,13 @@ def kill_stats_table(rows)
         <td data-sort="#{row[0].downcase}"><div class="head-skins" data-player="#{row[0]}"></div></td>
         <td>#{row[0]}</td>
         <td data-sort='#{row[1]}'>#{humanize_time(row[1].to_i)}</td>
-        <td>#{row[2]}</td>
-        <td data-sort='#{row[3]}'>#{humanize_time(row[3].to_i)}</td>
+        <td data-sort='#{row[2]}'>#{humanize_number(row[2])}</td>
+        <td data-sort='#{row[3]}'>#{humanize_number(row[3])}</td>
         <td>#{row[4]}</td>
+        <td data-sort='#{row[5]}'>#{humanize_time(row[5].to_i)}</td>
+        <td>#{row[6]}</td>
     EOF
-    5.upto(row.length - 1) do |index|
+    7.upto(row.length - 1) do |index|
       snippet += "<td>#{row[index]}</td>"
     end
     snippet += <<-EOF        
@@ -121,7 +125,11 @@ def crafted_stats_table(rows)
         <th>Total Crafted</th>
   EOF
   CRAFTING_KEYS.each do |key|
-    snippet += "<th>#{key.split('.').last.gsub('_',' ').capitalize}</th>"
+    if key == 'stat.craftingTableInteraction'
+      snippet += "<th>Crafting Table Interaction</th>"
+    else  
+      snippet += "<th>#{key.split('.').last.split('_').map(&:capitalize).join(' ')}</th>"
+    end
   end
   snippet += <<-EOF
       </tr>
@@ -160,7 +168,7 @@ def mined_stats_table(rows)
         <th>Total Mined</th>
   EOF
   MINING_KEYS.each do |key|
-    snippet += "<th>#{key.split('.').last.gsub('_',' ').capitalize}</th>"
+    snippet += "<th>#{key.split('.').last.split('_').map(&:capitalize).join(' ')}</th>"
   end
   snippet += <<-EOF
       </tr>
@@ -173,6 +181,46 @@ def mined_stats_table(rows)
         <td data-sort="#{row[0].downcase}"><div class="head-skins" data-player="#{row[0]}"></div></td>
         <td>#{row[0]}</td>
         <td data-sort='#{row[1]}'>#{humanize_number row[1].to_i}</td>
+    EOF
+    2.upto(row.length - 1) do |index|
+      snippet += "<td data-sort='#{row[index]}'>#{humanize_number row[index]}</td>"
+    end
+    snippet += <<-EOF        
+      </tr>
+    EOF
+  end
+
+  snippet += <<-EOF
+      </tbody>
+    </table>
+  EOF
+  
+end
+
+def general_stats_table(rows)
+  snippet = <<-EOF
+  <h3 style="margin-top:0px;">General Stats</h3>
+  <table id="stats" class="table table-striped table-bordered" cellspacing="0" width="100%" data-page-length='100'>
+    <thead>
+      <tr>
+        <th>Avatar</th>
+        <th>Name</th>
+        <th>Time Played</th>
+  EOF
+  GENERAL_STATS_KEYS[1..-1].each do |key|
+    snippet += "<th>#{key.split('.').last.split(/(?=[A-Z])/).map(&:capitalize).join(' ')}</th>"
+  end
+  snippet += <<-EOF
+      </tr>
+    </thead>
+    <tbody>
+  EOF
+  rows.each do |row|
+    snippet += <<-EOF
+      <tr>
+        <td data-sort="#{row[0].downcase}"><div class="head-skins" data-player="#{row[0]}"></div></td>
+        <td>#{row[0]}</td>   
+        <td data-sort='#{row[1]}'>#{humanize_time(row[1].to_i)}</td>     
     EOF
     2.upto(row.length - 1) do |index|
       snippet += "<td data-sort='#{row[index]}'>#{humanize_number row[index]}</td>"
