@@ -261,7 +261,7 @@ def adventuring_time_table(rows)
       <tr>
         <td data-sort="#{row[0].downcase}"><div class="scale-skins scale-3" data-player="#{row[0]}"></div></td>
         <td>#{row[0]}</td>
-        <td data-sort="#{row[4]}" class="#{row[1] == 'Yes' ? 'success' : ''}">#{row[1]} - #{(row[4].to_f * 100).to_i}%</td>
+        <td data-sort="#{row[4]}" class="#{row[1] == 'Yes' ? 'success' : ''}">#{(row[4].to_f * 100).to_i}%</td>
         <td data-sort="#{row[4]}" style="padding:4;vertical-align:middle;">
     EOF
     if row[2] != ''
@@ -301,7 +301,7 @@ def achievements_table(rows)
       <tr>
         <td data-sort="#{row[0].downcase}"><div class="scale-skins scale-3" data-player="#{row[0]}"></div></td>
         <td>#{row[0]}</td>
-        <td data-sort="#{row[3]}" class="#{row[2] == '' ? 'success' : ''}">#{row[2] == '' ? 'Yes' : 'No'} - #{(row[3].to_f * 100).to_i}%</td>
+        <td data-sort="#{row[3]}" class="#{row[2] == '' ? 'success' : ''}">#{(row[3].to_f * 100).to_i}%</td>
         <td data-sort="#{row[3]}" style="padding:4;vertical-align:middle;">
     EOF
     if row[1] != ''
