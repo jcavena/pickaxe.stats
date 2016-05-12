@@ -61,6 +61,9 @@ def generate_kill_stats(player_list)
                 "#{result['stat.playerKills'].to_i}"]
       KILLENTITY_KEYS.each do |key|
         row << "#{result[key].to_i}"
+        if KILLEDBY_KEYS.include? key.gsub('killEntity','entityKilledBy')
+          row << "#{result[key.gsub('killEntity','entityKilledBy')].to_i}"
+        end
       end
 
       rows << row.flatten
@@ -185,9 +188,9 @@ end
 
 player_list = get_player_list
 
-# puts "GENERATING KILL STATS PAGE..."
-# generate_kill_stats(player_list)
-# puts "FINISHED GENERATING KILL STATS PAGE..."
+puts "GENERATING KILL STATS PAGE..."
+generate_kill_stats(player_list)
+puts "FINISHED GENERATING KILL STATS PAGE..."
 
 # puts "GENERATING ADVENTURING TIME PAGE..."
 # generate_adventuring_time(player_list)
@@ -197,7 +200,7 @@ player_list = get_player_list
 # generate_achievements(player_list)
 # puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
 
-puts "GENERATING TRAVEL PAGE..."
-generate_travel_stats(player_list)
-puts "FINISHED GENERATING TRAVEL PAGE..."
+# puts "GENERATING TRAVEL PAGE..."
+# generate_travel_stats(player_list)
+# puts "FINISHED GENERATING TRAVEL PAGE..."
 

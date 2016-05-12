@@ -33,6 +33,9 @@ def kill_stats_table(rows)
     EOF
     KILLENTITY_KEYS.each do |key|
       snippet += "<th>#{key.split('.').last.gsub(/entity/i,'')}</th>"
+      if KILLEDBY_KEYS.include? key.gsub('killEntity','entityKilledBy')
+        snippet += "<th>Killed by #{key.split('.').last.gsub(/entity/i,'')}</th>"
+      end
     end
     snippet += <<-EOF
         </tr>

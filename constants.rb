@@ -169,7 +169,6 @@ ACHIEVEMENTS = {
   'achievement.overpowered' => 'Overpowered'
 }
 
-
 KILLENTITY_KEYS = [
   'stat.mobKills',
   'achievement.killEnemy',
@@ -185,12 +184,14 @@ KILLENTITY_KEYS = [
   'stat.killEntity.Guardian',
   'stat.killEntity.EntityHorse',
   'stat.killEntity.LavaSlime',
+  'stat.killEntity.MushroomCow',
   'stat.killEntity.Ozelot',
   'stat.killEntity.Pig',
   'stat.killEntity.PigZombie',
   'stat.killEntity.Rabbit',
   'stat.killEntity.Sheep',
   'stat.killEntity.Shulker',
+  'stat.killEntity.Silverfish',
   'stat.killEntity.Skeleton',
   'stat.killEntity.Slime',
   'stat.killEntity.Spider',
@@ -200,6 +201,25 @@ KILLENTITY_KEYS = [
   'achievement.killWither',
   'stat.killEntity.Wolf',
   'stat.killEntity.Zombie'
+]
+
+KILLEDBY_KEYS = [
+  'stat.entityKilledBy.Blaze',
+  'stat.entityKilledBy.CaveSpider',
+  'stat.entityKilledBy.Creeper',
+  'stat.entityKilledBy.Enderman',
+  'stat.entityKilledBy.Endermite',
+  'stat.entityKilledBy.Ghast',
+  'stat.entityKilledBy.Guardian',
+  'stat.entityKilledBy.LavaSlime',
+  'stat.entityKilledBy.PigZombie',
+  'stat.entityKilledBy.Silverfish',
+  'stat.entityKilledBy.Skeleton',
+  'stat.entityKilledBy.Slime',
+  'stat.entityKilledBy.Spider',
+  'stat.entityKilledBy.Witch',
+  'stat.entityKilledBy.Wolf',
+  'stat.entityKilledBy.Zombie',
 ]
 
 TRAVEL_KEYS = [
