@@ -210,7 +210,7 @@
         capeOverride: $(this).attr('data-cape'),
         imagePath: null,
         className: "",
-        default_skin: "char.png",
+        default_skin: "./assets/char.png",
         skin: $(this).attr('data-player'),  
         imageUrl: $(this).attr('data-url')  
       };
