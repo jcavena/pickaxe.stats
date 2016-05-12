@@ -21,6 +21,13 @@ def humanize_number number
   number.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
 end
 
+def efficiency num1, num2, pretty = true
+  return '-' if num1.to_i < MINIMUM_DAMAGE_DEALT
+  result = '%.2f' % (num1.to_f / (num1.to_i + num2.to_i).to_f)
+  return result if pretty == false
+  "#{result}%"
+end
+
 def kill_stats_table(rows)
   snippet = <<-EOF
     <h3 style="margin-top:0px;">Kill Stats</h3>
@@ -32,6 +39,7 @@ def kill_stats_table(rows)
           <th>Time Played</th>
           <th>Damage Dealt</th>
           <th>Damage Taken</th>
+          <th>Damage Efficiency</th>
           <th>Deaths</th>
           <th>Avg TTL</th>
           <th>Players Killed</th>
@@ -55,6 +63,7 @@ def kill_stats_table(rows)
         <td data-sort='#{row[1]}'>#{humanize_time(row[1].to_i)}</td>
         <td data-sort='#{row[2]}'>#{humanize_number(row[2])}</td>
         <td data-sort='#{row[3]}'>#{humanize_number(row[3])}</td>
+        <td data-sort='#{efficiency row[2], row[3], false}'>#{efficiency row[2], row[3]}</td>
         <td>#{row[4]}</td>
         <td data-sort='#{row[5]}'>#{humanize_time(row[5].to_i)}</td>
         <td>#{row[6]}</td>

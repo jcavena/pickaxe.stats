@@ -71,7 +71,7 @@ def generate_kill_stats(player_list)
       #sometimes there is no matching json file.
     end
   end
-
+  puts rows.inspect
   content = kill_stats_table(rows)
 
   File.open('kills.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
@@ -286,9 +286,9 @@ end
 
 player_list = get_player_list
 
-# puts "GENERATING KILL STATS PAGE..."
-# generate_kill_stats(player_list)
-# puts "FINISHED GENERATING KILL STATS PAGE..."
+puts "GENERATING KILL STATS PAGE..."
+generate_kill_stats(player_list)
+puts "FINISHED GENERATING KILL STATS PAGE..."
 
 # puts "GENERATING ADVENTURING TIME PAGE..."
 # generate_adventuring_time(player_list)
@@ -310,6 +310,6 @@ player_list = get_player_list
 # generate_mining_stats(player_list)
 # puts "FINISHED GENERATING MINING PAGE..."
 
-puts "GENERATING GENERAL STATS PAGE..."
-generate_general_stats(player_list)
-puts "FINISHED GENERATING GENERAL STATS PAGE..."
+# puts "GENERATING GENERAL STATS PAGE..."
+# generate_general_stats(player_list)
+# puts "FINISHED GENERATING GENERAL STATS PAGE..."
