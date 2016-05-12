@@ -197,8 +197,8 @@ def generate_general_stats(player_list)
       result = JSON.parse(buffer)
       row << "#{user['name']}"
       GENERAL_STATS_KEYS.each do |key|
-        if key == 'stat.playOneMinute'
-          row << "#{result['stat.playOneMinute'].to_i / 20}"
+        if ['stat.playOneMinute', 'stat.timeSinceDeath', 'stat.sneakTime'].include? key
+          row << "#{result[key].to_i / 20}t"
         else
           row << "#{result[key].to_i}"
         end

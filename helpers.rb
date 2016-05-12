@@ -223,7 +223,11 @@ def general_stats_table(rows)
         <td data-sort='#{row[1]}'>#{humanize_time(row[1].to_i)}</td>     
     EOF
     2.upto(row.length - 1) do |index|
-      snippet += "<td data-sort='#{row[index]}'>#{humanize_number row[index]}</td>"
+      if row[index] =~ /t/ 
+        snippet += "<td data-sort='#{row[index].gsub('t','')}'>#{humanize_time row[index].gsub('t','').to_i}</td>"
+      else
+        snippet += "<td data-sort='#{row[index]}'>#{humanize_number row[index]}</td>"
+      end
     end
     snippet += <<-EOF        
       </tr>
