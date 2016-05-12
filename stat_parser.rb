@@ -149,11 +149,8 @@ end
 
 def generate_travel_stats(player_list)
   template = File.open('template.html').read
-  #GENERATE KILL STATS PAGE (index.html)
-  
   rows = []
   
-  #'Name,Time Killed,Deaths,Players Killed, KILLENTITY_KEYS*'
   player_list.each do |user|
     request_uri = USER_URI_TEMPLATE.gsub("UUID", user['uuid'])
     url = "#{request_uri}"
@@ -186,11 +183,83 @@ def generate_travel_stats(player_list)
   File.open('travel.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
 end
 
+def generate_crafting_stats(player_list)
+  template = File.open('template.html').read
+  rows = []
+  
+  #'Name,Time Killed,Deaths,Players Killed, KILLENTITY_KEYS*'
+  player_list.each do |user|
+    request_uri = USER_URI_TEMPLATE.gsub("UUID", user['uuid'])
+    url = "#{request_uri}"
+
+    row = []
+    begin
+      buffer = open(url).read
+      result = JSON.parse(buffer)
+       row << "#{user['name']}"
+       row << '0'
+
+        crafted_total = 0
+        CRAFTING_KEYS.each do |key|
+          crafted_amount = result[key].to_i
+          crafted_total += crafted_amount
+          row << "#{crafted_amount}"
+        end
+
+        row = row.flatten
+        row[1] = crafted_total
+        rows << row
+    rescue 
+      #sometimes there is no matching json file.
+    end
+  end
+
+  content = crafted_stats_table(rows)
+
+  File.open('crafting.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
+end
+
+def generate_mining_stats(player_list)
+  template = File.open('template.html').read
+  rows = []
+  
+  #'Name,Time Killed,Deaths,Players Killed, KILLENTITY_KEYS*'
+  player_list.each do |user|
+    request_uri = USER_URI_TEMPLATE.gsub("UUID", user['uuid'])
+    url = "#{request_uri}"
+
+    row = []
+    begin
+      buffer = open(url).read
+      result = JSON.parse(buffer)
+       row << "#{user['name']}"
+       row << '0'
+
+        mined_total = 0
+        MINING_KEYS.each do |key|
+          mined_amount = result[key].to_i
+          mined_total += mined_amount
+          row << "#{mined_amount}"
+        end
+
+        row = row.flatten
+        row[1] = mined_total
+        rows << row
+    rescue 
+      #sometimes there is no matching json file.
+    end
+  end
+
+  content = mined_stats_table(rows)
+
+  File.open('mining.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
+end
+
 player_list = get_player_list
 
-puts "GENERATING KILL STATS PAGE..."
-generate_kill_stats(player_list)
-puts "FINISHED GENERATING KILL STATS PAGE..."
+# puts "GENERATING KILL STATS PAGE..."
+# generate_kill_stats(player_list)
+# puts "FINISHED GENERATING KILL STATS PAGE..."
 
 # puts "GENERATING ADVENTURING TIME PAGE..."
 # generate_adventuring_time(player_list)
@@ -204,3 +273,10 @@ puts "FINISHED GENERATING KILL STATS PAGE..."
 # generate_travel_stats(player_list)
 # puts "FINISHED GENERATING TRAVEL PAGE..."
 
+# puts "GENERATING CRAFTING PAGE..."
+# generate_crafting_stats(player_list)
+# puts "FINISHED GENERATING CRAFTING PAGE..."
+
+puts "GENERATING MINING PAGE..."
+generate_mining_stats(player_list)
+puts "FINISHED GENERATING MINING PAGE..."

@@ -14,8 +14,11 @@ def humanize_time secs
 end
 
 def humanize_distance cms
-
   '%.2f km' % (cms.to_f*0.00001)
+end
+
+def humanize_number number
+  number.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
 end
 
 def kill_stats_table(rows)
@@ -106,6 +109,86 @@ def travel_stats_table(rows)
   EOF
   
 end
+
+def crafted_stats_table(rows)
+  snippet = <<-EOF
+  <h3 style="margin-top:0px;">Crafting Stats</h3>
+  <table id="stats" class="table table-striped table-bordered" cellspacing="0" width="100%" data-page-length='100'>
+    <thead>
+      <tr>
+        <th>Avatar</th>
+        <th>Name</th>
+        <th>Total Crafted</th>
+  EOF
+  CRAFTING_KEYS.each do |key|
+    snippet += "<th>#{key.split('.').last.gsub('_',' ').capitalize}</th>"
+  end
+  snippet += <<-EOF
+      </tr>
+    </thead>
+    <tbody>
+  EOF
+  rows.each do |row|
+    snippet += <<-EOF
+      <tr>
+        <td data-sort="#{row[0].downcase}"><div class="head-skins" data-player="#{row[0]}"></div></td>
+        <td>#{row[0]}</td>
+        <td data-sort='#{row[1]}'>#{humanize_number row[1].to_i}</td>
+    EOF
+    2.upto(row.length - 1) do |index|
+      snippet += "<td data-sort='#{row[index]}'>#{humanize_number row[index]}</td>"
+    end
+    snippet += <<-EOF        
+      </tr>
+    EOF
+  end
+
+  snippet += <<-EOF
+      </tbody>
+    </table>
+  EOF
+end
+
+def mined_stats_table(rows)
+  snippet = <<-EOF
+  <h3 style="margin-top:0px;">Mining Stats</h3>
+  <table id="stats" class="table table-striped table-bordered" cellspacing="0" width="100%" data-page-length='100'>
+    <thead>
+      <tr>
+        <th>Avatar</th>
+        <th>Name</th>
+        <th>Total Mined</th>
+  EOF
+  MINING_KEYS.each do |key|
+    snippet += "<th>#{key.split('.').last.gsub('_',' ').capitalize}</th>"
+  end
+  snippet += <<-EOF
+      </tr>
+    </thead>
+    <tbody>
+  EOF
+  rows.each do |row|
+    snippet += <<-EOF
+      <tr>
+        <td data-sort="#{row[0].downcase}"><div class="head-skins" data-player="#{row[0]}"></div></td>
+        <td>#{row[0]}</td>
+        <td data-sort='#{row[1]}'>#{humanize_number row[1].to_i}</td>
+    EOF
+    2.upto(row.length - 1) do |index|
+      snippet += "<td data-sort='#{row[index]}'>#{humanize_number row[index]}</td>"
+    end
+    snippet += <<-EOF        
+      </tr>
+    EOF
+  end
+
+  snippet += <<-EOF
+      </tbody>
+    </table>
+  EOF
+  
+end
+
 
 def adventuring_time_table(rows)
   snippet = <<-EOF
