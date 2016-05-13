@@ -15,72 +15,68 @@ $(document).ready(function(){
   }
 
   var pie = null;
-  $('#graph_modal').on('show.bs.modal', function (event) {
-    //firefox won't render labels for the chart if the container isn't already visible when it starts. 
-    //the setTimeout gives it long enough to catch up. 
-    var timeout = setTimeout(function(){
+  $('#graph_modal').on('shown.bs.modal', function (event) {
+    //this needs to run on 'shown' and not 'show' so the window is visible prior to rendering the chart.
+    var button = $(event.relatedTarget); 
+    var chart_data = button.data('chart'); 
+    var chart_name = button.data('name');
     
-      var button = $(event.relatedTarget); 
-      var chart_data = button.data('chart'); 
-      var chart_name = button.data('name');
-      
-      $('.modal-title').text(chart_name);
-      if (pie != null){
-        pie.destroy();
-      }
-      pie = new d3pie("pieChart", {
-        "size": {
-          "canvasWidth": 590,
-          "pieOuterRadius": "80%"
+    $('.modal-title').text(chart_name);
+    if (pie != null){
+      pie.destroy();
+    }
+    pie = new d3pie("pieChart", {
+      "size": {
+        "canvasWidth": 590,
+        "pieOuterRadius": "80%"
+      },
+      "data": {
+        "sortOrder": "label-asc",
+        "smallSegmentGrouping": {
+          "enabled": true,
+          "value": 1
         },
-        "data": {
-          "sortOrder": "label-asc",
-          "smallSegmentGrouping": {
-            "enabled": true,
-            "value": 1
-          },
-          "content": chart_data
+        "content": chart_data
+      },
+      "labels": {
+        "outer": {
+          "pieDistance": 32
         },
-        "labels": {
-          "outer": {
-            "pieDistance": 32
-          },
-          "inner": {
-            "hideWhenLessThanPercentage": 3
-          },
-          "mainLabel": {
-            "fontSize": 11
-          },
-          "percentage": {
-            "color": "#ffffff",
-            "decimalPlaces": 0
-          },
-          "value": {
-            "color": "#adadad",
-            "fontSize": 11
-          },
-          "lines": {
-            "enabled": true
-          },
-          "truncation": {
-            "enabled": true
-          }
+        "inner": {
+          "hideWhenLessThanPercentage": 3
         },
-        "effects": {
-          "pullOutSegmentOnClick": {
-            "effect": "linear",
-            "speed": 400,
-            "size": 8
-          }
+        "mainLabel": {
+          "fontSize": 11
         },
-        "misc": {
-          "gradient": {
-            "enabled": true,
-            "percentage": 100
-          }
+        "percentage": {
+          "color": "#ffffff",
+          "decimalPlaces": 0
+        },
+        "value": {
+          "color": "#adadad",
+          "fontSize": 11
+        },
+        "lines": {
+          "enabled": true
+        },
+        "truncation": {
+          "enabled": true
         }
-      });
-    }, 300);
+      },
+      "effects": {
+        "pullOutSegmentOnClick": {
+          "effect": "linear",
+          "speed": 400,
+          "size": 8
+        }
+      },
+      "misc": {
+        "gradient": {
+          "enabled": true,
+          "percentage": 100
+        }
+      }
+    });
   });
 });
 
