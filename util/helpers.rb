@@ -30,7 +30,7 @@ end
 
 def build_chart_data keys, values, units = 'int'
   values_hash = Hash[*keys.zip(values).flatten]
-  values_hash.select{|k,v| calculate_chart_value(v, units) > 0}.map{|k,v| {label: k.split('.').last.gsub(/onecm/i,'').split('_').map(&:capitalize).join(' '), value: calculate_chart_value(v, units)}}
+  values_hash.select{|k,v| calculate_chart_value(v, units) > 0}.map{|k,v| {label: pretty_label(k), value: calculate_chart_value(v, units)}}
 end
 
 def calculate_chart_value(value, units)
@@ -44,6 +44,9 @@ def calculate_chart_value(value, units)
   end
 end
 
+def pretty_label(k)
+  k.split('.').last.gsub(/onecm|entity|eaten/i,'').split('_').map{|k| k.split(/(?=[A-Z])/)}.flatten.map(&:capitalize).join(' ')
+end
 def build_graph_modal_button name, keys, values, units = :int
   return <<-EOF
     <button type="button" class="btn btn-info btn-xs" style="float:right;" data-toggle="modal" data-target="#graph_modal" data-name="#{name}" data-chart='#{build_chart_data(keys,values,units).to_json}'><i class="fa fa-pie-chart"></i></button>
@@ -67,9 +70,9 @@ def kill_stats_table(rows)
           <th>Players Killed</th>
     EOF
     KILLENTITY_KEYS.each do |key|
-      snippet += "<th>#{key.split('.').last.gsub(/entity/i,'').split(/(?=[A-Z])/).map(&:capitalize).join(' ')}</th>"
+      snippet += "<th>#{pretty_label key}</th>"
       if KILLEDBY_KEYS.include? key.gsub('killEntity','entityKilledBy')
-        snippet += "<th>Killed by #{key.split('.').last.gsub(/entity/i,'').split(/(?=[A-Z])/).map(&:capitalize).join(' ')}</th>"
+        snippet += "<th>Killed by #{pretty_label key}</th>"
       end
     end
     snippet += <<-EOF
@@ -115,7 +118,7 @@ def travel_stats_table(rows)
         <th>Total Distance</th>
   EOF
   TRAVEL_KEYS.each do |key|
-    snippet += "<th>#{key.split('.').last.gsub(/onecm/i,'').capitalize}</th>"
+    snippet += "<th>#{pretty_label key}</th>"
   end
   snippet += <<-EOF
       </tr>
@@ -155,7 +158,7 @@ def food_stats_table(rows)
         <th style="white-space:nowrap;">Total Food</th>
   EOF
   FOOD_KEYS.each do |key|
-    snippet += "<th>#{key.split('.').last.split('_').map(&:capitalize).join(' ')}</th>"
+    snippet += "<th>#{pretty_label key}</th>"
   end
   snippet += <<-EOF
       </tr>
@@ -197,7 +200,7 @@ def crafted_stats_table(rows)
     if key == 'stat.craftingTableInteraction'
       snippet += "<th>Crafting Table Interaction</th>"
     else  
-      snippet += "<th>#{key.split('.').last.split('_').map(&:capitalize).join(' ')}</th>"
+      snippet += "<th>#{pretty_label key}</th>"
     end
   end
   snippet += <<-EOF
@@ -237,7 +240,7 @@ def mined_stats_table(rows)
         <th>Total Mined</th>
   EOF
   MINING_KEYS.each do |key|
-    snippet += "<th>#{key.split('.').last.split('_').map(&:capitalize).join(' ')}</th>"
+    snippet += "<th>#{pretty_label key}</th>"
   end
   snippet += <<-EOF
       </tr>
@@ -277,7 +280,7 @@ def general_stats_table(rows)
         <th>Time Played</th>
   EOF
   GENERAL_STATS_KEYS[1..-1].each do |key|
-    snippet += "<th>#{key.split('.').last.split(/(?=[A-Z])/).map(&:capitalize).join(' ')}</th>"
+    snippet += "<th>#{pretty_label key}</th>"
   end
   snippet += <<-EOF
       </tr>

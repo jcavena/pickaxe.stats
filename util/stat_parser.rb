@@ -316,8 +316,7 @@ def generate_food_stats(player_list)
   File.open('../food.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
 end
 
-
-player_list = get_player_list
+player_list = get_player_list #.sample(5)
 
 # puts "GENERATING KILL STATS PAGE..."
 # generate_kill_stats(player_list)
