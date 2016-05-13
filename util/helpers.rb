@@ -23,19 +23,30 @@ end
 
 def efficiency num1, num2, pretty = true
   return '-' if num1.to_i < MINIMUM_DAMAGE_DEALT
-  result = '%.2f' % (num1.to_f / (num1.to_i + num2.to_i).to_f)
+  result = '%.0f' % (num1.to_f / ((num1.to_i + num2.to_i).to_f) * 100)
   return result if pretty == false
   "#{result}%"
 end
 
-def build_chart_data keys, values
+def build_chart_data keys, values, units = 'int'
   values_hash = Hash[*keys.zip(values).flatten]
-  values_hash.select{|k,v| v.to_f > 0}.map{|k,v| {label: k.split('.').last.gsub(/onecm/i,'').capitalize, value: ('%.2f' % (v.to_f*0.00001)).to_f}}
+  values_hash.select{|k,v| calculate_chart_value(v, units) > 0}.map{|k,v| {label: k.split('.').last.gsub(/onecm/i,'').split('_').map(&:capitalize).join(' '), value: calculate_chart_value(v, units)}}
 end
 
-def build_graph_modal_button name, keys, values
+def calculate_chart_value(value, units)
+  case units
+  when :km
+    ('%.2f' % (value.to_f*0.00001)).to_f
+  when :int
+    value.to_i
+  when :float
+    value.to_f
+  end
+end
+
+def build_graph_modal_button name, keys, values, units = :int
   return <<-EOF
-    <button type="button" class="btn btn-info btn-xs" style="float:right;" data-toggle="modal" data-target="#graph_modal" data-name="#{name}" data-chart='#{build_chart_data(keys,values).to_json}'><i class="fa fa-pie-chart"></i></button>
+    <button type="button" class="btn btn-info btn-xs" style="float:right;" data-toggle="modal" data-target="#graph_modal" data-name="#{name}" data-chart='#{build_chart_data(keys,values,units).to_json}'><i class="fa fa-pie-chart"></i></button>
   EOF
 end
 
@@ -91,7 +102,6 @@ def kill_stats_table(rows)
       </tbody>
     </table>
   EOF
-  
 end
 
 def travel_stats_table(rows)
@@ -113,12 +123,12 @@ def travel_stats_table(rows)
     <tbody>
   EOF
   rows.each do |row|
-    graph_button = build_graph_modal_button row[0] + ' Travel Stats', TRAVEL_KEYS, row[2..-1]
+    graph_button = build_graph_modal_button row[0] + " #{humanize_distance row[1].to_i} Travel Distribution", TRAVEL_KEYS, row[2..-1], :km
     snippet += <<-EOF
       <tr>
         <td data-sort="#{row[0].downcase}"><div class="head-skins" data-player="#{row[0]}"></div></td>
-        <td>#{row[0]} #{graph_button}</td>
-        <td data-sort='#{row[1]}'>#{humanize_distance row[1].to_i}</td>
+        <td>#{row[0]}</td>
+        <td data-sort='#{row[1]}'>#{humanize_distance row[1].to_i} #{graph_button}</td>
     EOF
     2.upto(row.length - 1) do |index|
       snippet += "<td data-sort='#{row[index]}'>#{humanize_distance row[index]}</td>"
@@ -132,7 +142,45 @@ def travel_stats_table(rows)
       </tbody>
     </table>
   EOF
-  
+end
+
+def food_stats_table(rows)
+  snippet = <<-EOF
+  <h3 style="margin-top:0px;">Food Stats</h3>
+  <table id="stats" class="table table-striped table-bordered" cellspacing="0" width="100%" data-page-length='100'>
+    <thead>
+      <tr>
+        <th>Avatar</th>
+        <th>Name</th>
+        <th style="white-space:nowrap;">Total Food</th>
+  EOF
+  FOOD_KEYS.each do |key|
+    snippet += "<th>#{key.split('.').last.split('_').map(&:capitalize).join(' ')}</th>"
+  end
+  snippet += <<-EOF
+      </tr>
+    </thead>
+    <tbody>
+  EOF
+  rows.each do |row|
+    graph_button = build_graph_modal_button row[0] + " #{humanize_number row[1].to_i} Food Items Distribution", FOOD_KEYS, row[2..-1], :int
+    snippet += <<-EOF
+      <tr>
+        <td data-sort="#{row[0].downcase}"><div class="head-skins" data-player="#{row[0]}"></div></td>
+        <td>#{row[0]} </td>
+        <td data-sort='#{row[1]}'>#{humanize_number row[1].to_i} #{graph_button}</td>
+    EOF
+    2.upto(row.length - 1) do |index|
+      snippet += "<td data-sort='#{row[index]}'>#{humanize_number row[index]}</td>"
+    end
+    snippet += <<-EOF
+      </tr>
+    EOF
+  end
+  snippet += <<-EOF
+      </tbody>
+    </table>
+  EOF
 end
 
 def crafted_stats_table(rows)

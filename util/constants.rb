@@ -676,3 +676,36 @@ MINING_KEYS = [
   'stat.mineBlock.minecraft.yellow_flower'
 ]
 
+FOOD_KEYS = [
+  'stat.useItem.minecraft.apple',
+  'stat.useItem.minecraft.baked_potato',
+  'stat.useItem.minecraft.beef',
+  'stat.useItem.minecraft.beetroot',
+  'stat.useItem.minecraft.beetroot_soup',
+  'stat.useItem.minecraft.bread',
+  'stat.useItem.minecraft.cake',
+  'stat.useItem.minecraft.carrot',
+  'stat.useItem.minecraft.chicken',
+  'stat.useItem.minecraft.chorus_fruit',
+  'stat.useItem.minecraft.cooked_beef',
+  'stat.useItem.minecraft.cooked_chicken',
+  'stat.useItem.minecraft.cooked_fish',
+  'stat.useItem.minecraft.cooked_mutton',
+  'stat.useItem.minecraft.cooked_porkchop',
+  'stat.useItem.minecraft.cooked_rabbit',
+  'stat.useItem.minecraft.cookie',
+  'stat.useItem.minecraft.fish',
+  'stat.useItem.minecraft.golden_apple',
+  'stat.useItem.minecraft.melon',
+  'stat.useItem.minecraft.milk_bucket',
+  'stat.useItem.minecraft.mushroom_stew',
+  'stat.useItem.minecraft.mutton',
+  'stat.useItem.minecraft.poisonous_potato',
+  'stat.useItem.minecraft.porkchop',
+  'stat.useItem.minecraft.potato',
+  'stat.useItem.minecraft.pumpkin_pie',
+  'stat.useItem.minecraft.rabbit',
+  'stat.useItem.minecraft.rabbit_stew',
+  'stat.useItem.minecraft.rotten_flesh',
+  'stat.useItem.minecraft.spider_eye'
+]

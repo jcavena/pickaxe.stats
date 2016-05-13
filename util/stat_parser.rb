@@ -15,7 +15,6 @@ def get_player_list
   # Actually fetch the contents of the remote URL as a String.
   buffer = open(url).read
   player_list = JSON.parse(buffer).sort_by{|hash| hash['name'].downcase}
-
 end
 
 def generate_player_stats_csv(player_list)
@@ -104,7 +103,6 @@ def generate_adventuring_time(player_list)
   content = adventuring_time_table(rows)
 
   File.open('../adventuring_time.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
-  
 end
 
 def generate_achievements(player_list)
@@ -143,7 +141,6 @@ def generate_achievements(player_list)
   content = achievements_table(rows)
 
   File.open('../achievements.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
-  
 end
 
 def generate_travel_stats(player_list)
@@ -283,32 +280,73 @@ def generate_mining_stats(player_list)
   File.open('../mining.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
 end
 
+def generate_food_stats(player_list)
+  template = File.open('template.html').read
+  rows = []
+  
+  player_list.each do |user|
+    request_uri = USER_URI_TEMPLATE.gsub("UUID", user['uuid'])
+    url = "#{request_uri}"
+
+    row = []
+    begin
+      buffer = open(url).read
+      result = JSON.parse(buffer)
+       row << "#{user['name']}"
+       row << '0'
+
+        food_total = 0
+        FOOD_KEYS.each do |key|
+          food_amount = result[key].to_i
+          food_total += food_amount
+          row << "#{food_amount}"
+        end
+
+        row = row.flatten
+        row[1] = food_total
+        rows << row
+
+    rescue 
+      #sometimes there is no matching json file.
+    end
+  end
+
+  content = food_stats_table(rows)
+
+  File.open('../food.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
+end
+
+
 player_list = get_player_list
 
-puts "GENERATING KILL STATS PAGE..."
-generate_kill_stats(player_list)
-puts "FINISHED GENERATING KILL STATS PAGE..."
+# puts "GENERATING KILL STATS PAGE..."
+# generate_kill_stats(player_list)
+# puts "FINISHED GENERATING KILL STATS PAGE..."
 
-puts "GENERATING ADVENTURING TIME PAGE..."
-generate_adventuring_time(player_list)
-puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
+# puts "GENERATING ADVENTURING TIME PAGE..."
+# generate_adventuring_time(player_list)
+# puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
 
-puts "GENERATING ACHIEVEMENTS PAGE..."
-generate_achievements(player_list)
-puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
+# puts "GENERATING ACHIEVEMENTS PAGE..."
+# generate_achievements(player_list)
+# puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
 
-puts "GENERATING TRAVEL PAGE..."
-generate_travel_stats(player_list)
-puts "FINISHED GENERATING TRAVEL PAGE..."
+# puts "GENERATING TRAVEL PAGE..."
+# generate_travel_stats(player_list)
+# puts "FINISHED GENERATING TRAVEL PAGE..."
 
-puts "GENERATING CRAFTING PAGE..."
-generate_crafting_stats(player_list)
-puts "FINISHED GENERATING CRAFTING PAGE..."
+# puts "GENERATING CRAFTING PAGE..."
+# generate_crafting_stats(player_list)
+# puts "FINISHED GENERATING CRAFTING PAGE..."
 
-puts "GENERATING MINING PAGE..."
-generate_mining_stats(player_list)
-puts "FINISHED GENERATING MINING PAGE..."
+# puts "GENERATING MINING PAGE..."
+# generate_mining_stats(player_list)
+# puts "FINISHED GENERATING MINING PAGE..."
 
-puts "GENERATING GENERAL STATS PAGE..."
-generate_general_stats(player_list)
-puts "FINISHED GENERATING GENERAL STATS PAGE..."
+# puts "GENERATING FOOD PAGE..."
+# generate_food_stats(player_list)
+# puts "FINISHED GENERATING FOOD PAGE..."
+
+# puts "GENERATING GENERAL STATS PAGE..."
+# generate_general_stats(player_list)
+# puts "FINISHED GENERATING GENERAL STATS PAGE..."
