@@ -32,10 +32,6 @@ $(document).ready(function(){
       },
       "data": {
         "sortOrder": "label-asc",
-        "smallSegmentGrouping": {
-          "enabled": true,
-          "value": 1
-        },
         "content": chart_data
       },
       "labels": {
