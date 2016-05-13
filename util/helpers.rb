@@ -1,5 +1,6 @@
 
 def humanize_time secs
+  secs = clean_stat(secs).to_i
   #[[60, :seconds], [60, :minutes], [24, :hours], [1000, :days]].map{ |count, name|
   [[60, ''], [60, ':'], [24, ':'], [1000, ' days ']].map{ |count, name|
     if secs > 0
@@ -14,18 +15,16 @@ def humanize_time secs
 end
 
 def humanize_distance cms
-  '%.2f km' % (cms.to_f*0.00001)
+  '%.2f km' % (clean_stat(cms).to_f*0.00001)
 end
 
 def humanize_number number
-  number.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
+  clean_stat(number).to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
 end
 
-def efficiency num1, num2, pretty = true
-  return '-' if num1.to_i < MINIMUM_DAMAGE_DEALT
-  result = '%.0f' % (num1.to_f / ((num1.to_i + num2.to_i).to_f) * 100)
-  return result if pretty == false
-  "#{result}%"
+def efficiency num1, num2 #, pretty = true
+  return '-' if clean_stat(num1).to_i < MINIMUM_DAMAGE_DEALT
+  '%.0f%' % (num1.to_f / ((num1.to_i + clean_stat(num2).to_i).to_f) * 100)
 end
 
 def build_chart_data keys, values, units = 'int'
@@ -36,17 +35,34 @@ end
 def calculate_chart_value(value, units)
   case units
   when :km
-    ('%.2f' % (value.to_f*0.00001)).to_f
+    ('%.2f' % (clean_stat(value).to_f*0.00001)).to_f
   when :int
-    value.to_i
+    clean_stat(value).to_i
   when :float
-    value.to_f
+    clean_stat(value).to_f
   end
 end
 
-def pretty_label(k)
-  k.split('.').last.gsub(/onecm|entity|eaten/i,'').split('_').map{|k| k.split(/(?=[A-Z])/)}.flatten.map(&:capitalize).join(' ')
+def pretty_label label
+  label.split('.').last.gsub(/onecm|entity|eaten/i,'').split('_').map{|l| l.split(/(?=[A-Z])/)}.flatten.map(&:capitalize).join(' ')
 end
+
+def pretty_distance dist
+  humanize_distance dist
+end
+
+def pretty_stat stat
+  if stat =~ /t/ 
+    humanize_time stat
+  else
+    humanize_number stat
+  end
+end
+
+def clean_stat stat
+  stat.to_s.gsub(/\D/, '')
+end
+
 def build_graph_modal_button name, keys, values, units = :int
   return <<-EOF
     <button type="button" class="btn btn-info btn-xs" style="float:right;" data-toggle="modal" data-target="#graph_modal" data-name="#{name}" data-chart='#{build_chart_data(keys,values,units).to_json}'><i class="fa fa-pie-chart"></i></button>
@@ -85,12 +101,12 @@ def kill_stats_table(rows)
       <tr>
         <td data-sort="#{row[0].downcase}"><div class="head-skins" data-player="#{row[0]}"></div></td>
         <td>#{row[0]}</td>
-        <td data-sort='#{row[1]}'>#{humanize_time(row[1].to_i)}</td>
-        <td data-sort='#{row[2]}'>#{humanize_number(row[2])}</td>
-        <td data-sort='#{row[3]}'>#{humanize_number(row[3])}</td>
-        <td data-sort='#{efficiency row[2], row[3], false}'>#{efficiency row[2], row[3]}</td>
+        <td data-sort='#{clean_stat row[1]}'>#{pretty_stat row[1]}</td>
+        <td data-sort='#{clean_stat row[2]}'>#{pretty_stat row[2]}</td>
+        <td data-sort='#{clean_stat row[3]}'>#{pretty_stat row[3]}</td>
+        <td data-sort='#{clean_stat(efficiency row[2], row[3])}'>#{efficiency row[2], row[3]}</td>
         <td>#{row[4]}</td>
-        <td data-sort='#{row[5]}'>#{humanize_time(row[5].to_i)}</td>
+        <td data-sort='#{clean_stat row[5]}'>#{pretty_stat row[5]}</td>
         <td>#{row[6]}</td>
     EOF
     7.upto(row.length - 1) do |index|
@@ -126,15 +142,15 @@ def travel_stats_table(rows)
     <tbody>
   EOF
   rows.each do |row|
-    graph_button = build_graph_modal_button row[0] + " #{humanize_distance row[1].to_i} Travel Distribution", TRAVEL_KEYS, row[2..-1], :km
+    graph_button = build_graph_modal_button row[0] + " #{pretty_distance row[1]} Travel Distribution", TRAVEL_KEYS, row[2..-1], :km
     snippet += <<-EOF
       <tr>
         <td data-sort="#{row[0].downcase}"><div class="head-skins" data-player="#{row[0]}"></div></td>
         <td>#{row[0]}</td>
-        <td data-sort='#{row[1]}'>#{humanize_distance row[1].to_i} #{graph_button}</td>
+        <td data-sort='#{clean_stat row[1]}'>#{pretty_distance row[1]} #{graph_button}</td>
     EOF
     2.upto(row.length - 1) do |index|
-      snippet += "<td data-sort='#{row[index]}'>#{humanize_distance row[index]}</td>"
+      snippet += "<td data-sort='#{clean_stat row[index]}'>#{pretty_distance row[index]}</td>"
     end
     snippet += <<-EOF        
       </tr>
@@ -166,15 +182,15 @@ def food_stats_table(rows)
     <tbody>
   EOF
   rows.each do |row|
-    graph_button = build_graph_modal_button row[0] + " #{humanize_number row[1].to_i} Food Items Distribution", FOOD_KEYS, row[2..-1], :int
+    graph_button = build_graph_modal_button row[0] + " #{pretty_stat row[1]} Food Items Distribution", FOOD_KEYS, row[2..-1], :int
     snippet += <<-EOF
       <tr>
         <td data-sort="#{row[0].downcase}"><div class="head-skins" data-player="#{row[0]}"></div></td>
         <td>#{row[0]} </td>
-        <td data-sort='#{row[1]}'>#{humanize_number row[1].to_i} #{graph_button}</td>
+        <td data-sort='#{clean_stat row[1]}'>#{pretty_stat row[1]} #{graph_button}</td>
     EOF
     2.upto(row.length - 1) do |index|
-      snippet += "<td data-sort='#{row[index]}'>#{humanize_number row[index]}</td>"
+      snippet += "<td data-sort='#{clean_stat row[index]}'>#{pretty_stat row[index]}</td>"
     end
     snippet += <<-EOF
       </tr>
@@ -213,10 +229,10 @@ def crafted_stats_table(rows)
       <tr>
         <td data-sort="#{row[0].downcase}"><div class="head-skins" data-player="#{row[0]}"></div></td>
         <td>#{row[0]}</td>
-        <td data-sort='#{row[1]}'>#{humanize_number row[1].to_i}</td>
+        <td data-sort='#{clean_stat row[1]}'>#{pretty_stat row[1].to_i}</td>
     EOF
     2.upto(row.length - 1) do |index|
-      snippet += "<td data-sort='#{row[index]}'>#{humanize_number row[index]}</td>"
+      snippet += "<td data-sort='#{clean_stat row[index]}'>#{pretty_stat row[index]}</td>"
     end
     snippet += <<-EOF        
       </tr>
@@ -252,10 +268,10 @@ def mined_stats_table(rows)
       <tr>
         <td data-sort="#{row[0].downcase}"><div class="head-skins" data-player="#{row[0]}"></div></td>
         <td>#{row[0]}</td>
-        <td data-sort='#{row[1]}'>#{humanize_number row[1].to_i}</td>
+        <td data-sort='#{clean_stat row[1]}'>#{pretty_stat row[1].to_i}</td>
     EOF
     2.upto(row.length - 1) do |index|
-      snippet += "<td data-sort='#{row[index]}'>#{humanize_number row[index]}</td>"
+      snippet += "<td data-sort='#{clean_stat row[index]}'>#{pretty_stat row[index]}</td>"
     end
     snippet += <<-EOF        
       </tr>
@@ -292,14 +308,10 @@ def general_stats_table(rows)
       <tr>
         <td data-sort="#{row[0].downcase}"><div class="head-skins" data-player="#{row[0]}"></div></td>
         <td>#{row[0]}</td>   
-        <td data-sort='#{row[1]}'>#{humanize_time(row[1].to_i)}</td>     
+        <td data-sort='#{clean_stat row[1]}'>#{humanize_time(row[1].to_i)}</td>     
     EOF
     2.upto(row.length - 1) do |index|
-      if row[index] =~ /t/ 
-        snippet += "<td data-sort='#{row[index].gsub('t','')}'>#{humanize_time row[index].gsub('t','').to_i}</td>"
-      else
-        snippet += "<td data-sort='#{row[index]}'>#{humanize_number row[index]}</td>"
-      end
+      snippet += "<td data-sort='#{clean_stat row[index]}'>#{pretty_stat row[index]}</td>"  
     end
     snippet += <<-EOF        
       </tr>

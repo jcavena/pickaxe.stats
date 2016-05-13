@@ -52,11 +52,11 @@ def generate_kill_stats(player_list)
       buffer = open(url).read
       result = JSON.parse(buffer)
       row << ["#{user['name']}",
-                "#{result['stat.playOneMinute'].to_i / 20}",
+                "#{result['stat.playOneMinute'].to_i / 20}t",
                 "#{result['stat.damageDealt'].to_i}",
                 "#{result['stat.damageTaken'].to_i}",
                 "#{result['stat.deaths'].to_i }",
-                "#{(result['stat.playOneMinute'].to_i / 20) / (result['stat.deaths'].to_i + 1)}",
+                "#{(result['stat.playOneMinute'].to_i / 20) / (result['stat.deaths'].to_i + 1)}t",
                 "#{result['stat.playerKills'].to_i}"]
       KILLENTITY_KEYS.each do |key|
         row << "#{result[key].to_i}"
@@ -316,11 +316,11 @@ def generate_food_stats(player_list)
   File.open('../food.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
 end
 
-player_list = get_player_list #.sample(5)
+player_list = get_player_list #.sample(10)
 
-# puts "GENERATING KILL STATS PAGE..."
-# generate_kill_stats(player_list)
-# puts "FINISHED GENERATING KILL STATS PAGE..."
+puts "GENERATING KILL STATS PAGE..."
+generate_kill_stats(player_list)
+puts "FINISHED GENERATING KILL STATS PAGE..."
 
 # puts "GENERATING ADVENTURING TIME PAGE..."
 # generate_adventuring_time(player_list)
@@ -330,9 +330,9 @@ player_list = get_player_list #.sample(5)
 # generate_achievements(player_list)
 # puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
 
-# puts "GENERATING TRAVEL PAGE..."
-# generate_travel_stats(player_list)
-# puts "FINISHED GENERATING TRAVEL PAGE..."
+puts "GENERATING TRAVEL PAGE..."
+generate_travel_stats(player_list)
+puts "FINISHED GENERATING TRAVEL PAGE..."
 
 # puts "GENERATING CRAFTING PAGE..."
 # generate_crafting_stats(player_list)
@@ -346,6 +346,6 @@ player_list = get_player_list #.sample(5)
 # generate_food_stats(player_list)
 # puts "FINISHED GENERATING FOOD PAGE..."
 
-# puts "GENERATING GENERAL STATS PAGE..."
-# generate_general_stats(player_list)
-# puts "FINISHED GENERATING GENERAL STATS PAGE..."
+puts "GENERATING GENERAL STATS PAGE..."
+generate_general_stats(player_list)
+puts "FINISHED GENERATING GENERAL STATS PAGE..."
