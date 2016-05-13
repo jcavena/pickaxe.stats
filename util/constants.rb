@@ -706,6 +706,6 @@ FOOD_KEYS = [
   'stat.useItem.minecraft.pumpkin_pie',
   'stat.useItem.minecraft.rabbit',
   'stat.useItem.minecraft.rabbit_stew',
-  #'stat.useItem.minecraft.rotten_flesh',
+  'stat.useItem.minecraft.rotten_flesh',
   'stat.useItem.minecraft.spider_eye'
 ]
