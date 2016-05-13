@@ -16,69 +16,71 @@ $(document).ready(function(){
 
   var pie = null;
   $('#graph_modal').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget); 
-    var chart_data = button.data('chart'); 
-    var chart_name = button.data('name');
+    //firefox won't render labels for the chart if the container isn't already visible when it starts. 
+    //the setTimeout gives it long enough to catch up. 
+    var timeout = setTimeout(function(){
     
-    console.log("name: " + chart_name);
-    var modal = $(this);
-    modal.find('.modal-title').text(chart_name);
-    if (pie != null){
-      pie.destroy();
-    }
-    pie = new d3pie("pieChart", {
-      "size": {
-        "canvasWidth": 590,
-        "pieOuterRadius": "80%"
-      },
-      "data": {
-        "sortOrder": "label-asc",
-        "smallSegmentGrouping": {
-          "enabled": true,
-          "value": 1
-        },
-        "content": chart_data
-      },
-      "labels": {
-        "outer": {
-          "pieDistance": 32
-        },
-        "inner": {
-          "hideWhenLessThanPercentage": 3
-        },
-        "mainLabel": {
-          "fontSize": 11
-        },
-        "percentage": {
-          "color": "#ffffff",
-          "decimalPlaces": 0
-        },
-        "value": {
-          "color": "#adadad",
-          "fontSize": 11
-        },
-        "lines": {
-          "enabled": true
-        },
-        "truncation": {
-          "enabled": true
-        }
-      },
-      "effects": {
-        "pullOutSegmentOnClick": {
-          "effect": "linear",
-          "speed": 400,
-          "size": 8
-        }
-      },
-      "misc": {
-        "gradient": {
-          "enabled": true,
-          "percentage": 100
-        }
+      var button = $(event.relatedTarget); 
+      var chart_data = button.data('chart'); 
+      var chart_name = button.data('name');
+      
+      $('.modal-title').text(chart_name);
+      if (pie != null){
+        pie.destroy();
       }
-    });
-
+      pie = new d3pie("pieChart", {
+        "size": {
+          "canvasWidth": 590,
+          "pieOuterRadius": "80%"
+        },
+        "data": {
+          "sortOrder": "label-asc",
+          "smallSegmentGrouping": {
+            "enabled": true,
+            "value": 1
+          },
+          "content": chart_data
+        },
+        "labels": {
+          "outer": {
+            "pieDistance": 32
+          },
+          "inner": {
+            "hideWhenLessThanPercentage": 3
+          },
+          "mainLabel": {
+            "fontSize": 11
+          },
+          "percentage": {
+            "color": "#ffffff",
+            "decimalPlaces": 0
+          },
+          "value": {
+            "color": "#adadad",
+            "fontSize": 11
+          },
+          "lines": {
+            "enabled": true
+          },
+          "truncation": {
+            "enabled": true
+          }
+        },
+        "effects": {
+          "pullOutSegmentOnClick": {
+            "effect": "linear",
+            "speed": 400,
+            "size": 8
+          }
+        },
+        "misc": {
+          "gradient": {
+            "enabled": true,
+            "percentage": 100
+          }
+        }
+      });
+    }, 300);
   });
 });
 
