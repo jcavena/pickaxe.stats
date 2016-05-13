@@ -71,10 +71,9 @@ def generate_kill_stats(player_list)
       #sometimes there is no matching json file.
     end
   end
-  puts rows.inspect
   content = kill_stats_table(rows)
 
-  File.open('kills.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
+  File.open('../kills.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
 end
 
 def generate_adventuring_time(player_list)
@@ -104,7 +103,7 @@ def generate_adventuring_time(player_list)
   end
   content = adventuring_time_table(rows)
 
-  File.open('adventuring_time.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
+  File.open('../adventuring_time.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
   
 end
 
@@ -143,7 +142,7 @@ def generate_achievements(player_list)
   end
   content = achievements_table(rows)
 
-  File.open('achievements.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
+  File.open('../achievements.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
   
 end
 
@@ -180,7 +179,7 @@ def generate_travel_stats(player_list)
 
   content = travel_stats_table(rows)
 
-  File.open('travel.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
+  File.open('../travel.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
 end
 
 def generate_general_stats(player_list)
@@ -211,7 +210,7 @@ def generate_general_stats(player_list)
 
   content = general_stats_table(rows)
 
-  File.open('index.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
+  File.open('../index.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
 end
 
 def generate_crafting_stats(player_list)
@@ -246,7 +245,7 @@ def generate_crafting_stats(player_list)
 
   content = crafted_stats_table(rows)
 
-  File.open('crafting.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
+  File.open('../crafting.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
 end
 
 def generate_mining_stats(player_list)
@@ -281,7 +280,7 @@ def generate_mining_stats(player_list)
 
   content = mined_stats_table(rows)
 
-  File.open('mining.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
+  File.open('../mining.html', 'w'){ |file| file.write template.gsub('<user_content>',content)}
 end
 
 player_list = get_player_list
@@ -290,26 +289,26 @@ puts "GENERATING KILL STATS PAGE..."
 generate_kill_stats(player_list)
 puts "FINISHED GENERATING KILL STATS PAGE..."
 
-# puts "GENERATING ADVENTURING TIME PAGE..."
-# generate_adventuring_time(player_list)
-# puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
+puts "GENERATING ADVENTURING TIME PAGE..."
+generate_adventuring_time(player_list)
+puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
 
-# puts "GENERATING ACHIEVEMENTS PAGE..."
-# generate_achievements(player_list)
-# puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
+puts "GENERATING ACHIEVEMENTS PAGE..."
+generate_achievements(player_list)
+puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
 
-# puts "GENERATING TRAVEL PAGE..."
-# generate_travel_stats(player_list)
-# puts "FINISHED GENERATING TRAVEL PAGE..."
+puts "GENERATING TRAVEL PAGE..."
+generate_travel_stats(player_list)
+puts "FINISHED GENERATING TRAVEL PAGE..."
 
-# puts "GENERATING CRAFTING PAGE..."
-# generate_crafting_stats(player_list)
-# puts "FINISHED GENERATING CRAFTING PAGE..."
+puts "GENERATING CRAFTING PAGE..."
+generate_crafting_stats(player_list)
+puts "FINISHED GENERATING CRAFTING PAGE..."
 
-# puts "GENERATING MINING PAGE..."
-# generate_mining_stats(player_list)
-# puts "FINISHED GENERATING MINING PAGE..."
+puts "GENERATING MINING PAGE..."
+generate_mining_stats(player_list)
+puts "FINISHED GENERATING MINING PAGE..."
 
-# puts "GENERATING GENERAL STATS PAGE..."
-# generate_general_stats(player_list)
-# puts "FINISHED GENERATING GENERAL STATS PAGE..."
+puts "GENERATING GENERAL STATS PAGE..."
+generate_general_stats(player_list)
+puts "FINISHED GENERATING GENERAL STATS PAGE..."

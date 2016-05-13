@@ -28,6 +28,17 @@ def efficiency num1, num2, pretty = true
   "#{result}%"
 end
 
+def build_chart_data keys, values
+  values_hash = Hash[*keys.zip(values).flatten]
+  values_hash.select{|k,v| v.to_f > 0}.map{|k,v| {label: k.split('.').last.gsub(/onecm/i,'').capitalize, value: ('%.2f' % (v.to_f*0.00001)).to_f}}
+end
+
+def build_graph_modal_button name, keys, values
+  return <<-EOF
+    <button type="button" class="btn btn-info btn-xs" style="float:right;" data-toggle="modal" data-target="#graph_modal" data-name="#{name}" data-chart='#{build_chart_data(keys,values).to_json}'><i class="fa fa-pie-chart"></i></button>
+  EOF
+end
+
 def kill_stats_table(rows)
   snippet = <<-EOF
     <h3 style="margin-top:0px;">Kill Stats</h3>
@@ -102,10 +113,11 @@ def travel_stats_table(rows)
     <tbody>
   EOF
   rows.each do |row|
+    graph_button = build_graph_modal_button row[0] + ' Travel Stats', TRAVEL_KEYS, row[2..-1]
     snippet += <<-EOF
       <tr>
         <td data-sort="#{row[0].downcase}"><div class="head-skins" data-player="#{row[0]}"></div></td>
-        <td>#{row[0]}</td>
+        <td>#{row[0]} #{graph_button}</td>
         <td data-sort='#{row[1]}'>#{humanize_distance row[1].to_i}</td>
     EOF
     2.upto(row.length - 1) do |index|
@@ -249,7 +261,6 @@ def general_stats_table(rows)
   EOF
   
 end
-
 
 def adventuring_time_table(rows)
   snippet = <<-EOF
