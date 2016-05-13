@@ -28,7 +28,7 @@ $(document).ready(function(){
     pie = new d3pie("pieChart", {
       "size": {
         "canvasWidth": 590,
-        "pieOuterRadius": "80%"
+        "pieOuterRadius": "75%"
       },
       "data": {
         "sortOrder": "label-asc",
@@ -36,7 +36,7 @@ $(document).ready(function(){
       },
       "labels": {
         "outer": {
-          "pieDistance": 32
+          "pieDistance": 45
         },
         "inner": {
           "hideWhenLessThanPercentage": 3
