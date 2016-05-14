@@ -2,6 +2,9 @@
 USER_CACHE_URI = 'https://raw.githubusercontent.com/qrush/pickaxe.club/master/usercache.json'
 USER_URI_TEMPLATE = 'https://raw.githubusercontent.com/qrush/pickaxe.club/master/world/stats/UUID.json'
 
+LOCAL_USER_CACHE_PATH = '../../pickaxe.club/usercache.json'
+LOCAL_USER_TEMPLATE_PATH = '../../pickaxe.club/world/stats/UUID.json'
+
 MINIMUM_DAMAGE_DEALT = 75_000
 
 MANUALLY_USED_KEYS = [
