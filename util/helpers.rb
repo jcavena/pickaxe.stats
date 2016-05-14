@@ -77,7 +77,6 @@ def kill_stats_table(rows)
         <tr>
           <th>Avatar</th>
           <th>Name</th>
-          <th>Time Played</th>
           <th>Damage Dealt</th>
           <th>Damage Taken</th>
           <th>Damage Efficiency</th>
