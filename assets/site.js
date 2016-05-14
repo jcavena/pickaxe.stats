@@ -11,7 +11,9 @@ $(document).ready(function(){
   $(".scale-6").skinPreview({scale: 6});
 
   if ($('#stats').length > 0) {
-    $('#stats').DataTable();
+    $('#stats').DataTable({
+      "order": [[ 2, "desc" ]]
+    });
   }
 
   var pie = null;
