@@ -24,7 +24,7 @@ end
 
 def efficiency num1, num2 #, pretty = true
   return '-' if clean_stat(num1).to_i < MINIMUM_DAMAGE_DEALT
-  '%.0f%' % (num1.to_f / ((num1.to_i + clean_stat(num2).to_i).to_f) * 100)
+  '%.0f%' % (clean_stat(num1).to_f / ((clean_stat(num1).to_i + clean_stat(num2).to_i).to_f) * 100)
 end
 
 def build_chart_data keys, values, units = 'int'
@@ -102,13 +102,12 @@ def kill_stats_table(rows)
         <td>#{row[0]}</td>
         <td data-sort='#{clean_stat row[1]}'>#{pretty_stat row[1]}</td>
         <td data-sort='#{clean_stat row[2]}'>#{pretty_stat row[2]}</td>
-        <td data-sort='#{clean_stat row[3]}'>#{pretty_stat row[3]}</td>
-        <td data-sort='#{clean_stat(efficiency row[2], row[3])}'>#{efficiency row[2], row[3]}</td>
-        <td>#{row[4]}</td>
-        <td data-sort='#{clean_stat row[5]}'>#{pretty_stat row[5]}</td>
-        <td>#{row[6]}</td>
+        <td data-sort='#{clean_stat(efficiency row[1], row[2])}'>#{efficiency row[1], row[2]}</td>
+        <td>#{row[3]}</td>
+        <td data-sort='#{clean_stat row[4]}'>#{pretty_stat row[4]}</td>
+        <td>#{row[5]}</td>
     EOF
-    7.upto(row.length - 1) do |index|
+    6.upto(row.length - 1) do |index|
       snippet += "<td>#{row[index]}</td>"
     end
     snippet += <<-EOF        

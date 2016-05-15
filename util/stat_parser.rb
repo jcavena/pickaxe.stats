@@ -60,8 +60,8 @@ def generate_kill_stats(player_list)
     begin
       result = get_player_data player
       row << ["#{player['name']}",
-                "#{result['stat.damageDealt'].to_i}",
-                "#{result['stat.damageTaken'].to_i}",
+                "#{result['stat.damageDealt'].to_i / 10}",
+                "#{result['stat.damageTaken'].to_i / 10}",
                 "#{result['stat.deaths'].to_i }",
                 "#{(result['stat.playOneMinute'].to_i / 20) / (result['stat.deaths'].to_i + 1)}t",
                 "#{result['stat.playerKills'].to_i}"]
@@ -189,6 +189,8 @@ def generate_general_stats(player_list)
       GENERAL_STATS_KEYS.each do |key|
         if ['stat.playOneMinute', 'stat.timeSinceDeath', 'stat.sneakTime'].include? key
           row << "#{result[key].to_i / 20}t"
+        elsif ['stat.damageDealt', 'stat.damageTaken'].include? key
+          row << "#{result[key].to_i / 10}"
         else
           row << "#{result[key].to_i}"
         end
@@ -326,6 +328,7 @@ time = Benchmark.measure do
 
   player_list = get_player_list #.sample(10)
 
+  puts "Player Count: #{player_list.size}"
 
   # puts 'generating bubble stats'
   # generate_bubble_stats(player_list, 'stat.timeSinceDeath', 3600)
@@ -335,29 +338,29 @@ time = Benchmark.measure do
   generate_kill_stats(player_list)
   puts "FINISHED GENERATING KILL STATS PAGE..."
 
-  puts "GENERATING ADVENTURING TIME PAGE..."
-  generate_adventuring_time(player_list)
-  puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
+  # puts "GENERATING ADVENTURING TIME PAGE..."
+  # generate_adventuring_time(player_list)
+  # puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
 
-  puts "GENERATING ACHIEVEMENTS PAGE..."
-  generate_achievements(player_list)
-  puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
+  # puts "GENERATING ACHIEVEMENTS PAGE..."
+  # generate_achievements(player_list)
+  # puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
 
-  puts "GENERATING TRAVEL PAGE..."
-  generate_travel_stats(player_list)
-  puts "FINISHED GENERATING TRAVEL PAGE..."
+  # puts "GENERATING TRAVEL PAGE..."
+  # generate_travel_stats(player_list)
+  # puts "FINISHED GENERATING TRAVEL PAGE..."
 
-  puts "GENERATING CRAFTING PAGE..."
-  generate_crafting_stats(player_list)
-  puts "FINISHED GENERATING CRAFTING PAGE..."
+  # puts "GENERATING CRAFTING PAGE..."
+  # generate_crafting_stats(player_list)
+  # puts "FINISHED GENERATING CRAFTING PAGE..."
 
-  puts "GENERATING MINING PAGE..."
-  generate_mining_stats(player_list)
-  puts "FINISHED GENERATING MINING PAGE..."
+  # puts "GENERATING MINING PAGE..."
+  # generate_mining_stats(player_list)
+  # puts "FINISHED GENERATING MINING PAGE..."
 
-  puts "GENERATING FOOD PAGE..."
-  generate_food_stats(player_list)
-  puts "FINISHED GENERATING FOOD PAGE..."
+  # puts "GENERATING FOOD PAGE..."
+  # generate_food_stats(player_list)
+  # puts "FINISHED GENERATING FOOD PAGE..."
 
   puts "GENERATING GENERAL STATS PAGE..."
   generate_general_stats(player_list)
