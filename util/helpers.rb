@@ -31,20 +31,13 @@ def build_chart_data keys, values, units = 'int'
   if units.to_s == 'bool'
     true_values = keys.split(',').map(&:strip)
     false_values = values.split(',').map(&:strip)
-    puts "true: #{true_values.inspect}"
-    puts "false: #{false_values.inspect}"
     values_hash = {}
     if true_values.any?
-      puts "true values"
       values_hash = Hash[*true_values.zip([{'value' => 1, 'color' => '#65A620'}]*true_values.size).flatten]
     end
     if false_values.any?
-      puts "false values"
       values_hash.merge!(Hash[*false_values.zip([{'value' => 1, 'color' => '#961A1A'}]*false_values.size).flatten])
     end
-    puts "hash: #{values_hash.inspect}"
-    #puts "k & v: #{values_hash.map{|k,v| "k = #{k.inspect}, v = value:#{v[:value]}"}}"
-    puts "result #{values_hash.map{|k,v| {label: pretty_label(k), value: v['value'].to_i, color: v['color'].to_s}}.to_json}"
     values_hash.map{|k,v| {label: pretty_label(k), value: v['value'].to_i, color: v['color'].to_s}}.to_json
   else
     values_hash = Hash[*keys.zip(values).flatten]
@@ -399,7 +392,7 @@ def achievements_table(rows)
       <tbody>
     EOF
   rows.each do |row|
-    graph_button = build_graph_modal_button row[0] + " #{pretty_stat row[1]} Adventuring Time Biomes", row[4], row[2], :bool
+    graph_button = build_graph_modal_button row[0] + " #{pretty_stat row[1]} Achievements", row[4], row[2], :bool
     
     snippet += <<-EOF
       <tr>
