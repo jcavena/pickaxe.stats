@@ -19,7 +19,7 @@ MANUALLY_USED_KEYS = [
 GENERAL_STATS_KEYS = [
   'stat.playOneMinute',
   'stat.animalsBred',
-  'stat.bannerCleaned',
+  #'stat.bannerCleaned',
   'stat.beaconInteraction',
   'stat.brewingstandInteraction',
   'stat.cauldronFilled',

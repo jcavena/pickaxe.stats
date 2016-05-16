@@ -97,7 +97,8 @@ def generate_adventuring_time(player_list)
               "#{adventuring_time ? "Yes" : "No"}",
               "#{result['achievement.exploreAllBiomes']['progress'].sort.join(", ")}",
               "#{(ADVENTURING_TIME_BIOMES - explored_adventuring_time_biomes).sort.join(", ")}",
-              explored_adventuring_time_biomes.length.to_f / biomes_denominator
+              explored_adventuring_time_biomes.length.to_f / biomes_denominator,
+              "#{ADVENTURING_TIME_BIOMES.sort.join(",")}"
               ]
       rows << row
     rescue 
@@ -133,7 +134,8 @@ def generate_achievements(player_list)
       row = ["#{player['name']}",
               "#{completed_achievements.map{|key| ACHIEVEMENTS[key]}.join(", ")}",
               "#{remaining_achievements.map{|key| ACHIEVEMENTS[key]}.join(", ")}",
-              "#{completed_achievements.length.to_f / achivements_denominator}"
+              "#{completed_achievements.length.to_f / achivements_denominator}",
+              "#{ACHIEVEMENTS.values.join(",")}"
               ]
       rows << row
     rescue 

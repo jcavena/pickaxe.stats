@@ -28,8 +28,28 @@ def efficiency num1, num2 #, pretty = true
 end
 
 def build_chart_data keys, values, units = 'int'
-  values_hash = Hash[*keys.zip(values).flatten]
-  values_hash.select{|k,v| calculate_chart_value(v, units) > 0}.map{|k,v| {label: pretty_label(k), value: calculate_chart_value(v, units)}}
+  if units.to_s == 'bool'
+    true_values = keys.split(',').map(&:strip)
+    false_values = values.split(',').map(&:strip)
+    puts "true: #{true_values.inspect}"
+    puts "false: #{false_values.inspect}"
+    values_hash = {}
+    if true_values.any?
+      puts "true values"
+      values_hash = Hash[*true_values.zip([{'value' => 1, 'color' => '#65A620'}]*true_values.size).flatten]
+    end
+    if false_values.any?
+      puts "false values"
+      values_hash.merge!(Hash[*false_values.zip([{'value' => 1, 'color' => '#961A1A'}]*false_values.size).flatten])
+    end
+    puts "hash: #{values_hash.inspect}"
+    #puts "k & v: #{values_hash.map{|k,v| "k = #{k.inspect}, v = value:#{v[:value]}"}}"
+    puts "result #{values_hash.map{|k,v| {label: pretty_label(k), value: v['value'].to_i, color: v['color'].to_s}}.to_json}"
+    values_hash.map{|k,v| {label: pretty_label(k), value: v['value'].to_i, color: v['color'].to_s}}.to_json
+  else
+    values_hash = Hash[*keys.zip(values).flatten]
+    values_hash.select{|k,v| calculate_chart_value(v, units) > 0}.map{|k,v| {label: pretty_label(k), value: calculate_chart_value(v, units)}}.to_json
+  end
 end
 
 def calculate_chart_value(value, units)
@@ -65,7 +85,7 @@ end
 
 def build_graph_modal_button name, keys, values, units = :int
   return <<-EOF
-    <button type="button" class="btn btn-info btn-xs" style="float:right;" data-toggle="modal" data-target="#graph_modal" data-name="#{name}" data-chart='#{build_chart_data(keys,values,units).to_json}'><i class="fa fa-pie-chart"></i></button>
+    <button type="button" class="btn btn-info btn-xs" style="float:right;" data-toggle="modal" data-target="#graph_modal" data-name="#{name}" data-chart='#{build_chart_data(keys,values,units)}' data-chart-type='#{units.to_s == 'bool' ? 'donut' : 'pie'}'><i class="fa fa-pie-chart"></i></button>
   EOF
 end
 
@@ -338,12 +358,13 @@ def adventuring_time_table(rows)
       <tbody>
     EOF
   rows.each do |row|
+    graph_button = build_graph_modal_button row[0] + " #{pretty_stat row[1]} Adventuring Time Biomes", row[5], row[3], :bool
     snippet += <<-EOF
       <tr>
         <td data-sort="#{row[0].downcase}"><div class="scale-skins scale-3" data-player="#{row[0]}"></div></td>
         <td>#{row[0]}</td>
-        <td data-sort="#{row[4]}" class="#{row[1] == 'Yes' ? 'success' : ''}">#{(row[4].to_f * 100).to_i}%</td>
-        <td data-sort="#{row[4]}" style="padding:4;vertical-align:middle;">
+        <td data-sort="#{(row[4]*100).to_i}" class="#{row[1] == 'Yes' ? 'success' : ''}">#{(row[4].to_f * 100).to_i}% #{graph_button}</td>
+        <td data-sort="#{(row[4]*100).to_i}" style="padding:4;vertical-align:middle;">
     EOF
     if row[2] != ''
       snippet += <<-EOF
@@ -378,12 +399,14 @@ def achievements_table(rows)
       <tbody>
     EOF
   rows.each do |row|
+    graph_button = build_graph_modal_button row[0] + " #{pretty_stat row[1]} Adventuring Time Biomes", row[4], row[2], :bool
+    
     snippet += <<-EOF
       <tr>
         <td data-sort="#{row[0].downcase}"><div class="scale-skins scale-3" data-player="#{row[0]}"></div></td>
         <td>#{row[0]}</td>
-        <td data-sort="#{row[3]}" class="#{row[2] == '' ? 'success' : ''}">#{(row[3].to_f * 100).to_i}%</td>
-        <td data-sort="#{row[3]}" style="padding:4;vertical-align:middle;">
+        <td data-sort="#{(row[3].to_f*100).to_i}" class="#{row[2] == '' ? 'success' : ''}">#{(row[3].to_f * 100).to_i}% #{graph_button}</td>
+        <td data-sort="#{(row[3].to_f*100).to_i}" style="padding:4;vertical-align:middle;">
     EOF
     if row[1] != ''
       snippet += <<-EOF

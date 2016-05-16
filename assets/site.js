@@ -16,24 +16,39 @@ $(document).ready(function(){
     });
   }
 
-  var pie = null;
+  var chart = null;
   $('#graph_modal').on('shown.bs.modal', function (event) {
     //this needs to run on 'shown' and not 'show' so the window is visible prior to rendering the chart.
     var button = $(event.relatedTarget); 
     var chart_data = button.data('chart'); 
     var chart_name = button.data('name');
-    
-    $('.modal-title').text(chart_name);
-    if (pie != null){
-      pie.destroy();
+    var chart_type = button.data('chart-type');
+    var chart_inner_radius = "0";
+    var chart_sort_order = "label-asc";
+    var hide_label_percentage_min = 3;
+
+    if (chart_type == 'donut') {
+      chart_inner_radius = 100 - parseInt(button.parent().data('sort'));
+      if (chart_inner_radius > 0){
+        chart_inner_radius += '%';
+      }
+
+      chart_sort_order = "none";
+      hide_label_percentage_min = 100;
     }
-    pie = new d3pie("pieChart", {
+
+    $('.modal-title').text(chart_name);
+    if (chart != null){
+      chart.destroy();
+    }
+    chart = new d3pie("pieChart", {
       "size": {
         "canvasWidth": 590,
-        "pieOuterRadius": "75%"
+        "pieOuterRadius": "75%",
+        "pieInnerRadius": chart_inner_radius
       },
       "data": {
-        "sortOrder": "label-asc",
+        "sortOrder": chart_sort_order,
         "content": chart_data
       },
       "labels": {
@@ -41,7 +56,7 @@ $(document).ready(function(){
           "pieDistance": 45
         },
         "inner": {
-          "hideWhenLessThanPercentage": 3
+          "hideWhenLessThanPercentage": hide_label_percentage_min
         },
         "mainLabel": {
           "fontSize": 11
@@ -76,6 +91,9 @@ $(document).ready(function(){
       }
     });
   });
+
+
+
 });
 
 
