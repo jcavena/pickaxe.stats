@@ -188,6 +188,7 @@ def generate_general_stats(player_list)
     begin
       result = get_player_data player
       row << "#{player['name']}"
+      row << "#{player['uuid']}"
       GENERAL_STATS_KEYS.each do |key|
         if ['stat.playOneMinute', 'stat.timeSinceDeath', 'stat.sneakTime'].include? key
           row << "#{result[key].to_i / 20}t"
@@ -300,10 +301,50 @@ def generate_food_stats(player_list)
   File.open('../food.html', 'w'){ |file| file.write template.gsub('<player_content>',content)}
 end
 
+def generate_grand_total_stats(player_list, keys = [])
+
+  if keys.empty?
+    keys += GENERAL_STATS_KEYS
+    keys += TRAVEL_KEYS
+    keys += FOOD_KEYS
+    keys += KILLENTITY_KEYS
+    keys += KILLEDBY_KEYS
+    keys += MINING_KEYS
+    keys += CRAFTING_KEYS
+    
+    #keys += ACHIEVEMENT_KEYS
+    #keys += BIOMES
+  end  
+
+  rows = []
+  
+  player_list.each do |player|
+    begin
+      rows << get_player_data(player)
+    rescue 
+      #sometimes there is no matching json file.
+    end
+  end
+
+  keys.each do |key|
+    total_val = 0
+    rows.each do |row|
+      total_val += row[key].to_i
+    end
+
+    if ['stat.playOneMinute', 'stat.timeSinceDeath', 'stat.sneakTime'].include? key
+      total_val = humanize_time total_val.to_i / 20
+    elsif key =~ /onecm/i
+      total_val = humanize_distance total_val
+    end
+
+    puts "#{pretty_label key} Total: #{total_val}"
+  end
+end
 
 def generate_bubble_stats(player_list, key, threshold = 0)
   rows = {}
-  player_list.each do |user|
+  player_list.each do |player|
     begin
       result = get_player_data player
       if ['stat.playOneMinute', 'stat.timeSinceDeath', 'stat.sneakTime'].include? key
@@ -312,7 +353,7 @@ def generate_bubble_stats(player_list, key, threshold = 0)
         value = result[key]
       end
       next if value < threshold
-      rows[user['name']] = value
+      rows[player['name']] = value
     rescue 
       #sometimes there is no matching json file.
     end
@@ -321,7 +362,6 @@ def generate_bubble_stats(player_list, key, threshold = 0)
   #content = general_stats_table(rows)
   puts "STATS FOR #{key}"
   puts rows.to_json
-
 end
 
 @local = true
@@ -332,41 +372,46 @@ time = Benchmark.measure do
 
   puts "Player Count: #{player_list.size}"
 
+  puts 'generating grand total stats'
+  generate_grand_total_stats(player_list)
+  puts 'finished generating grand total stats'
+
   # puts 'generating bubble stats'
-  # generate_bubble_stats(player_list, 'stat.timeSinceDeath', 3600)
+  # generate_bubble_stats(player_list, 'stat.playOneMinute', 0)
   # puts 'finished generating bubble stats'
 
   puts "GENERATING KILL STATS PAGE..."
   generate_kill_stats(player_list)
   puts "FINISHED GENERATING KILL STATS PAGE..."
 
-  # puts "GENERATING ADVENTURING TIME PAGE..."
-  # generate_adventuring_time(player_list)
-  # puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
+  puts "GENERATING ADVENTURING TIME PAGE..."
+  generate_adventuring_time(player_list)
+  puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
 
-  # puts "GENERATING ACHIEVEMENTS PAGE..."
-  # generate_achievements(player_list)
-  # puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
+  puts "GENERATING ACHIEVEMENTS PAGE..."
+  generate_achievements(player_list)
+  puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
 
-  # puts "GENERATING TRAVEL PAGE..."
-  # generate_travel_stats(player_list)
-  # puts "FINISHED GENERATING TRAVEL PAGE..."
+  puts "GENERATING TRAVEL PAGE..."
+  generate_travel_stats(player_list)
+  puts "FINISHED GENERATING TRAVEL PAGE..."
 
-  # puts "GENERATING CRAFTING PAGE..."
-  # generate_crafting_stats(player_list)
-  # puts "FINISHED GENERATING CRAFTING PAGE..."
+  puts "GENERATING CRAFTING PAGE..."
+  generate_crafting_stats(player_list)
+  puts "FINISHED GENERATING CRAFTING PAGE..."
 
-  # puts "GENERATING MINING PAGE..."
-  # generate_mining_stats(player_list)
-  # puts "FINISHED GENERATING MINING PAGE..."
+  puts "GENERATING MINING PAGE..."
+  generate_mining_stats(player_list)
+  puts "FINISHED GENERATING MINING PAGE..."
 
-  # puts "GENERATING FOOD PAGE..."
-  # generate_food_stats(player_list)
-  # puts "FINISHED GENERATING FOOD PAGE..."
+  puts "GENERATING FOOD PAGE..."
+  generate_food_stats(player_list)
+  puts "FINISHED GENERATING FOOD PAGE..."
 
   puts "GENERATING GENERAL STATS PAGE..."
   generate_general_stats(player_list)
   puts "FINISHED GENERATING GENERAL STATS PAGE..."
+
 end
 
 puts "Time elapsed: #{time}"

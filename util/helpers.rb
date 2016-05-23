@@ -319,9 +319,9 @@ def general_stats_table(rows)
       <tr>
         <td data-sort="#{row[0].downcase}"><div class="head-skins" data-player="#{row[0]}"></div></td>
         <td>#{row[0]}</td>   
-        <td data-sort='#{clean_stat row[1]}'>#{humanize_time(row[1].to_i)}</td>     
+        <td data-sort='#{clean_stat row[2]}'>#{humanize_time(row[2].to_i)}</td>     
     EOF
-    2.upto(row.length - 1) do |index|
+    3.upto(row.length - 1) do |index|
       snippet += "<td data-sort='#{clean_stat row[index]}'>#{pretty_stat row[index]}</td>"  
     end
     snippet += <<-EOF        
