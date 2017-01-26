@@ -237,27 +237,27 @@ def generate_crafting_stats#(player_list)
   
 end
 
-def generate_mining_stats(player_list)
-  template = File.open('template.html').read
+def generate_mining_stats#(player_list)
   rows = []
   
-  player_list.each do |player|
-    row = []
+  @player_data.each do |player|
+    row = {}
     begin
-      result = get_player_data player
-      row << "#{player['name']}"
-      row << '0'
-
-      mined_total = 0
+      row['name'] = "#{player['name']}"
+      row['mined_total'] = 0
+      row['previous_mined_total'] = 0
+      current_mined_total = 0
+      previous_mined_total = 0
       MINING_KEYS.each do |key|
-        mined_amount = result[key].to_i
-        mined_total += mined_amount
-        row << "#{mined_amount}"
+        current_mined_total += player['current_stats'][key].to_i
+        row['current.' + key] = player['current_stats'][key].to_i
+        previous_mined_total += player['previous_stats'][key].to_i
+        row['previous.' + key] = player['previous_stats'][key].to_i
       end
-
-      row = row.flatten
-      row[1] = mined_total
+      row['current.mined_total'] = current_mined_total
+      row['previous.mined_total'] = previous_mined_total
       rows << row
+
     rescue 
       #sometimes there is no matching json file.
     end
@@ -265,7 +265,7 @@ def generate_mining_stats(player_list)
 
   content = mined_stats_table(rows)
 
-  File.open('../mining.html', 'w'){ |file| file.write template.gsub('<player_content>',content)}
+  generate_file('../mining.html', content)
 end
 
 def generate_food_stats#(player_list)
@@ -423,13 +423,13 @@ time = Benchmark.measure do
   # generate_travel_stats #(player_list)
   # puts "FINISHED GENERATING TRAVEL PAGE..."
 
-  puts "GENERATING CRAFTING PAGE..."
-  generate_crafting_stats #(player_list)
-  puts "FINISHED GENERATING CRAFTING PAGE..."
+  # puts "GENERATING CRAFTING PAGE..."
+  # generate_crafting_stats #(player_list)
+  # puts "FINISHED GENERATING CRAFTING PAGE..."
 
-  # puts "GENERATING MINING PAGE..."
-  # generate_mining_stats(player_list)
-  # puts "FINISHED GENERATING MINING PAGE..."
+  puts "GENERATING MINING PAGE..."
+  generate_mining_stats #(player_list)
+  puts "FINISHED GENERATING MINING PAGE..."
 
   # puts "GENERATING FOOD PAGE..."
   # generate_food_stats #(player_list)

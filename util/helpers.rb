@@ -300,16 +300,18 @@ def mined_stats_table(rows)
     <tbody>
   EOF
   rows.each do |row|
+    #graph_button = build_graph_modal_button row['name'] + " #{pretty_stat row['current.mined_total']} Mining Distribution", MINING_KEYS, row, :int
+    graph_button = ""
     snippet += <<-EOF
       <tr>
-        <td data-sort="#{row[0].downcase}"><div class="head-skins" data-player="#{row[0]}"></div></td>
-        <td>#{row[0]}</td>
-        <td data-sort='#{clean_stat row[1]}'>#{pretty_stat row[1].to_i}</td>
+        <td data-sort="#{row['name'].downcase}"><div class="head-skins" data-player="#{row['name']}"></div></td>
+        <td>#{row['name']}</td>
+        <td data-sort='#{clean_stat row['current.mined_total']}'>#{pretty_stat row['current.mined_total']} #{graph_button}<br>#{calculate_delta(row, 'mined_total', 'pretty_stat')}</td>
     EOF
-    2.upto(row.length - 1) do |index|
-      snippet += "<td data-sort='#{clean_stat row[index]}'>#{pretty_stat row[index]}</td>"
+    MINING_KEYS.each do |key|
+      snippet += "<td data-sort='#{clean_stat row['current.' + key]}'>#{pretty_stat row['current.' + key]}<br>#{calculate_delta(row, key, 'pretty_stat')}</td>"
     end
-    snippet += <<-EOF        
+    snippet += <<-EOF
       </tr>
     EOF
   end
