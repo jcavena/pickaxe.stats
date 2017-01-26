@@ -12,7 +12,14 @@ $(document).ready(function(){
 
   if ($('#stats').length > 0) {
     $('#stats').DataTable({
-      fixedHeader: true,
+      // scrollX: true,
+      // fixedColumns: {
+      //   leftColumns: 2
+      // },
+      fixedHeader: {
+        headerOffset: 50
+      },
+      
       "order": [[ 2, "desc" ]]
     });
   }

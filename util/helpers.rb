@@ -28,7 +28,6 @@ def efficiency num1, num2 #, pretty = true
 end
 
 def build_chart_data keys, values, units = 'int'
-  keys = keys.map{|s| s.sub(/\A(?!current\.)/, "current.")}
   if units.to_s == 'bool'
     true_values = keys.split(',').map(&:strip)
     false_values = values.split(',').map(&:strip)
@@ -41,6 +40,7 @@ def build_chart_data keys, values, units = 'int'
     end
     values_hash.map{|k,v| {label: pretty_label(k), value: v['value'].to_i, color: v['color'].to_s}}.to_json
   else
+    keys = keys.map{|s| s.sub(/\A(?!current\.)/, "current.")} 
     values_hash = Hash[*keys.zip(values.values_at(*keys)).flatten]
     values_hash.select{|k,v| calculate_chart_value(v, units) > 0}.map{|k,v| {label: pretty_label(k), value: calculate_chart_value(v, units)}}.to_json
   end

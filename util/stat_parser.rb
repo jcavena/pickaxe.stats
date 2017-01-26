@@ -399,45 +399,45 @@ time = Benchmark.measure do
 
   # puts "Player Count: #{player_list.size}"
 
-  # puts 'generating grand total stats'
-  # generate_grand_total_stats(player_list)
-  # puts 'finished generating grand total stats'
+  puts 'generating grand total stats'
+  generate_grand_total_stats(player_list)
+  puts 'finished generating grand total stats'
 
   # puts 'generating bubble stats'
   # generate_bubble_stats(player_list, 'stat.playOneMinute', 0)
   # puts 'finished generating bubble stats'
 
-  # puts "GENERATING KILL STATS PAGE..."
-  # generate_kill_stats(player_list)
-  # puts "FINISHED GENERATING KILL STATS PAGE..."
+  puts "GENERATING KILL STATS PAGE..."
+  generate_kill_stats(player_list)
+  puts "FINISHED GENERATING KILL STATS PAGE..."
 
-  # puts "GENERATING ADVENTURING TIME PAGE..."
-  # generate_adventuring_time(player_list)
-  # puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
+  puts "GENERATING ADVENTURING TIME PAGE..."
+  generate_adventuring_time(player_list)
+  puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
 
-  # puts "GENERATING ACHIEVEMENTS PAGE..."
-  # generate_achievements(player_list)
-  # puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
+  puts "GENERATING ACHIEVEMENTS PAGE..."
+  generate_achievements(player_list)
+  puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
 
-  # puts "GENERATING TRAVEL PAGE..."
-  # generate_travel_stats #(player_list)
-  # puts "FINISHED GENERATING TRAVEL PAGE..."
+  puts "GENERATING TRAVEL PAGE..."
+  generate_travel_stats #(player_list)
+  puts "FINISHED GENERATING TRAVEL PAGE..."
 
-  # puts "GENERATING CRAFTING PAGE..."
-  # generate_crafting_stats #(player_list)
-  # puts "FINISHED GENERATING CRAFTING PAGE..."
+  puts "GENERATING CRAFTING PAGE..."
+  generate_crafting_stats #(player_list)
+  puts "FINISHED GENERATING CRAFTING PAGE..."
 
   puts "GENERATING MINING PAGE..."
   generate_mining_stats #(player_list)
   puts "FINISHED GENERATING MINING PAGE..."
 
-  # puts "GENERATING FOOD PAGE..."
-  # generate_food_stats #(player_list)
-  # puts "FINISHED GENERATING FOOD PAGE..."
+  puts "GENERATING FOOD PAGE..."
+  generate_food_stats #(player_list)
+  puts "FINISHED GENERATING FOOD PAGE..."
 
-  # puts "GENERATING GENERAL STATS PAGE..."
-  # generate_general_stats #(player_list)
-  # puts "FINISHED GENERATING GENERAL STATS PAGE..."
+  puts "GENERATING GENERAL STATS PAGE..."
+  generate_general_stats #(player_list)
+  puts "FINISHED GENERATING GENERAL STATS PAGE..."
 
 end
 
