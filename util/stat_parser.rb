@@ -9,12 +9,10 @@ require 'pp'
 require_relative 'constants.rb'
 require_relative 'helpers.rb'
 
-
-
-def get_player_list
+def get_player_list(which_week = 'current')
   buffer = nil
   if @local == true
-    buffer = File.open(LOCAL_USER_CACHE_PATH).read
+    buffer = File.open(Object.const_get("LOCAL_#{which_week.upcase}_USER_CACHE_PATH")).read
   else
     request_uri = USER_CACHE_URI
     url = "#{request_uri}"
@@ -24,10 +22,10 @@ def get_player_list
   JSON.parse(buffer).sort_by{|hash| hash['name'].downcase}
 end
 
-def get_player_data(player)
+def get_player_data(player, which_week = 'current')
   buffer = nil
   if @local == true
-    buffer = File.open(LOCAL_USER_TEMPLATE_PATH.gsub("UUID", player['uuid'])).read
+    buffer = File.open(Object.const_get("LOCAL_#{which_week.upcase}_USER_TEMPLATE_PATH").gsub("UUID", player['uuid'])).read
   else
     request_uri = USER_URI_TEMPLATE.gsub("UUID", player['uuid'])
     url = "#{request_uri}"
@@ -147,27 +145,26 @@ def generate_achievements(player_list)
   File.open('../achievements.html', 'w'){ |file| file.write template.gsub('<player_content>',content)}
 end
 
-def generate_travel_stats(player_list)
-  template = File.open('template.html').read
+def generate_travel_stats
   rows = []
   
-  player_list.each do |player|
-    row = []
+  @player_data.each do |player|
+    row = {}
     begin
-      result = get_player_data player
-       row << "#{player['name']}"
-       row << '0'
-
-        travel_total = 0
-        TRAVEL_KEYS.each do |key|
-          key_travel_total = result[key].to_i
-          travel_total += key_travel_total
-          row << "#{key_travel_total}"
-        end
-
-        row = row.flatten
-        row[1] = travel_total
-        rows << row
+      row['name'] = "#{player['name']}"
+      row['travel_total'] = 0
+      row['previous_travel_total'] = 0
+      current_travel_total = 0
+      previous_travel_total = 0
+      TRAVEL_KEYS.each do |key|
+        current_travel_total += player['current_stats'][key].to_i
+        row['current.' + key] = player['current_stats'][key].to_i
+        previous_travel_total += player['previous_stats'][key].to_i
+        row['previous.' + key] = player['previous_stats'][key].to_i
+      end
+      row['current.travel_total'] = current_travel_total
+      row['previous.travel_total'] = previous_travel_total
+      rows << row
 
     rescue 
       #sometimes there is no matching json file.
@@ -175,38 +172,38 @@ def generate_travel_stats(player_list)
   end
 
   content = travel_stats_table(rows)
-
-  File.open('../travel.html', 'w'){ |file| file.write template.gsub('<player_content>',content)}
+  generate_file('../travel.html', content)
+  
 end
 
-def generate_general_stats(player_list)
-  template = File.open('template.html').read
+def generate_general_stats
   rows = []
   
-  player_list.each do |player|
-    row = []
+  @player_data.each do |player|
+    row = {}
     begin
-      result = get_player_data player
-      row << "#{player['name']}"
-      row << "#{player['uuid']}"
+      row['name'] = "#{player['name']}"
+      row['uuid'] = "#{player['uuid']}"
       GENERAL_STATS_KEYS.each do |key|
         if ['stat.playOneMinute', 'stat.timeSinceDeath', 'stat.sneakTime'].include? key
-          row << "#{result[key].to_i / 20}t"
+          row['current.' + key] = "#{player['current_stats'][key].to_i / 20}t"
+          row['previous.' + key] = "#{player['previous_stats'][key].to_i / 20}t"
         elsif ['stat.damageDealt', 'stat.damageTaken'].include? key
-          row << "#{result[key].to_i / 10}"
+          row['current.' + key] = "#{player['current_stats'][key].to_i / 10}"
+          row['previous.' + key] = "#{player['previous_stats'][key].to_i / 10}"
         else
-          row << "#{result[key].to_i}"
+          row['current.' + key] = "#{player['current_stats'][key].to_i}"
+          row['previous.' + key] = "#{player['previous_stats'][key].to_i}"
         end
       end
-      rows << row.flatten
+      rows << row #.flatten
     rescue 
       #sometimes there is no matching json file.
     end
   end
 
   content = general_stats_table(rows)
-
-  File.open('../index.html', 'w'){ |file| file.write template.gsub('<player_content>',content)}
+  generate_file('../index.html', content)
 end
 
 def generate_crafting_stats(player_list)
@@ -271,25 +268,26 @@ def generate_mining_stats(player_list)
   File.open('../mining.html', 'w'){ |file| file.write template.gsub('<player_content>',content)}
 end
 
-def generate_food_stats(player_list)
-  template = File.open('template.html').read
+def generate_food_stats#(player_list)
   rows = []
   
-  player_list.each do |player|
-    row = []
+  @player_data.each do |player|
+    row = {}
     begin
-      result = get_player_data player
-      row << "#{player['name']}"
-      row << '0'
-      food_total = 0
+      row['name'] = "#{player['name']}"
+      row['food_total'] = 0
+      row['previous_food_total'] = 0
+      current_food_total = 0
+      previous_food_total = 0
       FOOD_KEYS.each do |key|
-        food_amount = result[key].to_i
-        food_total += food_amount
-        row << "#{food_amount}"
+        current_food_total += player['current_stats'][key].to_i
+        row['current.' + key] = player['current_stats'][key].to_i
+        previous_food_total += player['previous_stats'][key].to_i
+        row['previous.' + key] = player['previous_stats'][key].to_i
       end
 
-      row = row.flatten
-      row[1] = food_total
+      row['current.food_total'] = current_food_total
+      row['previous.food_total'] = previous_food_total
       rows << row
     rescue 
       #sometimes there is no matching json file.
@@ -297,8 +295,8 @@ def generate_food_stats(player_list)
   end
 
   content = food_stats_table(rows)
+  generate_file('../food.html', content)
 
-  File.open('../food.html', 'w'){ |file| file.write template.gsub('<player_content>',content)}
 end
 
 def generate_grand_total_stats(player_list, keys = [])
@@ -364,53 +362,82 @@ def generate_bubble_stats(player_list, key, threshold = 0)
   puts rows.to_json
 end
 
+def generate_file(file_name, content)
+  template = File.open('template.html').read  
+  File.open(file_name, 'w'){ |file| file.write template.gsub('<player_content>',content)}
+end
+
+def load_all_player_data
+  @player_data = get_player_list
+
+  @player_data.each do |player|
+    player['previous_stats'] = get_player_data player, 'previous' rescue nil
+    player['current_stats'] = get_player_data player rescue nil
+
+    if player['previous_stats'].nil?
+      puts "#{player['name']} has no previous stats"
+    end
+    if player['current_stats'].nil?
+      puts "#{player['name']} has no current stats"
+    end
+  end
+  
+  # puts @player_data
+
+end
+
 @local = true
+@player_data = {}
 
 time = Benchmark.measure do
 
   player_list = get_player_list #.sample(10)
 
-  puts "Player Count: #{player_list.size}"
+  load_all_player_data
+  
+  #puts @player_data
 
-  puts 'generating grand total stats'
-  generate_grand_total_stats(player_list)
-  puts 'finished generating grand total stats'
+  # puts "Player Count: #{player_list.size}"
+
+  # puts 'generating grand total stats'
+  # generate_grand_total_stats(player_list)
+  # puts 'finished generating grand total stats'
 
   # puts 'generating bubble stats'
   # generate_bubble_stats(player_list, 'stat.playOneMinute', 0)
   # puts 'finished generating bubble stats'
 
-  puts "GENERATING KILL STATS PAGE..."
-  generate_kill_stats(player_list)
-  puts "FINISHED GENERATING KILL STATS PAGE..."
+  # puts "GENERATING KILL STATS PAGE..."
+  # generate_kill_stats(player_list)
+  # puts "FINISHED GENERATING KILL STATS PAGE..."
 
-  puts "GENERATING ADVENTURING TIME PAGE..."
-  generate_adventuring_time(player_list)
-  puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
+  # puts "GENERATING ADVENTURING TIME PAGE..."
+  # generate_adventuring_time(player_list)
+  # puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
 
-  puts "GENERATING ACHIEVEMENTS PAGE..."
-  generate_achievements(player_list)
-  puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
+  # puts "GENERATING ACHIEVEMENTS PAGE..."
+  # generate_achievements(player_list)
+  # puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
 
   puts "GENERATING TRAVEL PAGE..."
-  generate_travel_stats(player_list)
+  generate_travel_stats #(player_list)
   puts "FINISHED GENERATING TRAVEL PAGE..."
 
-  puts "GENERATING CRAFTING PAGE..."
-  generate_crafting_stats(player_list)
-  puts "FINISHED GENERATING CRAFTING PAGE..."
+  # puts "GENERATING CRAFTING PAGE..."
+  # generate_crafting_stats(player_list)
+  # puts "FINISHED GENERATING CRAFTING PAGE..."
 
-  puts "GENERATING MINING PAGE..."
-  generate_mining_stats(player_list)
-  puts "FINISHED GENERATING MINING PAGE..."
+  # puts "GENERATING MINING PAGE..."
+  # generate_mining_stats(player_list)
+  # puts "FINISHED GENERATING MINING PAGE..."
 
   puts "GENERATING FOOD PAGE..."
-  generate_food_stats(player_list)
+  generate_food_stats #(player_list)
   puts "FINISHED GENERATING FOOD PAGE..."
 
-  puts "GENERATING GENERAL STATS PAGE..."
-  generate_general_stats(player_list)
-  puts "FINISHED GENERATING GENERAL STATS PAGE..."
+  # puts "GENERATING GENERAL STATS PAGE..."
+  # generate_general_stats #(player_list)
+  # puts "FINISHED GENERATING GENERAL STATS PAGE..."
 
 end
 

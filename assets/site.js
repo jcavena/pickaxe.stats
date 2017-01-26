@@ -12,6 +12,7 @@ $(document).ready(function(){
 
   if ($('#stats').length > 0) {
     $('#stats').DataTable({
+      fixedHeader: true,
       "order": [[ 2, "desc" ]]
     });
   }

@@ -2,7 +2,7 @@
 def humanize_time secs
   secs = clean_stat(secs).to_i
   #[[60, :seconds], [60, :minutes], [24, :hours], [1000, :days]].map{ |count, name|
-  [[60, ''], [60, ':'], [24, ':'], [1000, ' days ']].map{ |count, name|
+  [[60, ''], [60, ':'], [24, ':'], [1000, ' d ']].map{ |count, name|
     if secs > 0
       secs, n = secs.divmod(count)
       if n.to_i < 10 && name != ' days '
@@ -28,6 +28,7 @@ def efficiency num1, num2 #, pretty = true
 end
 
 def build_chart_data keys, values, units = 'int'
+  keys = keys.map{|s| s.sub(/\A(?!current\.)/, "current.")}
   if units.to_s == 'bool'
     true_values = keys.split(',').map(&:strip)
     false_values = values.split(',').map(&:strip)
@@ -40,7 +41,7 @@ def build_chart_data keys, values, units = 'int'
     end
     values_hash.map{|k,v| {label: pretty_label(k), value: v['value'].to_i, color: v['color'].to_s}}.to_json
   else
-    values_hash = Hash[*keys.zip(values).flatten]
+    values_hash = Hash[*keys.zip(values.values_at(*keys)).flatten]
     values_hash.select{|k,v| calculate_chart_value(v, units) > 0}.map{|k,v| {label: pretty_label(k), value: calculate_chart_value(v, units)}}.to_json
   end
 end
@@ -53,6 +54,27 @@ def calculate_chart_value(value, units)
     clean_stat(value).to_i
   when :float
     clean_stat(value).to_f
+  end
+end
+
+def calculate_delta(row, stat, formatter = nil)
+  previous_stat = clean_stat(row['previous.' + stat]).to_i
+  current_stat = clean_stat(row['current.' + stat]).to_i
+
+  delta = current_stat - previous_stat
+
+  unless formatter.nil?
+    pretty_delta = delta
+    pretty_delta = "#{pretty_delta}t" if row['current.' + stat] =~ /t/ 
+    pretty_delta = send(formatter, pretty_delta)
+  end
+
+  if delta > 0
+    "<span style=\"color:#439A45;white-space:nowrap\"><i class=\"fa fa-caret-up\"></i> #{pretty_delta}</span>"
+  elsif delta < 0
+    "<span style=\"color:#d9534f;white-space:nowrap\"><i class=\"fa fa-caret-down\"></i> #{pretty_delta}</span>"
+  else
+    ""
   end
 end
 
@@ -153,15 +175,15 @@ def travel_stats_table(rows)
     <tbody>
   EOF
   rows.each do |row|
-    graph_button = build_graph_modal_button row[0] + " #{pretty_distance row[1]} Travel Distribution", TRAVEL_KEYS, row[2..-1], :km
+    graph_button = build_graph_modal_button row['name'] + " #{pretty_distance row['current.travel_total']} Travel Distribution", TRAVEL_KEYS, row, :km
     snippet += <<-EOF
       <tr>
-        <td data-sort="#{row[0].downcase}"><div class="head-skins" data-player="#{row[0]}"></div></td>
-        <td>#{row[0]}</td>
-        <td data-sort='#{clean_stat row[1]}'>#{pretty_distance row[1]} #{graph_button}</td>
+        <td data-sort="#{row['name'].downcase}"><div class="head-skins" data-player="#{row['name']}"></div></td>
+        <td>#{row['name']}</td>
+        <td data-sort='#{clean_stat row['current.travel_total']}'>#{pretty_distance row['current.travel_total']} #{graph_button}<br>#{calculate_delta(row, 'travel_total', 'pretty_distance')}</td>
     EOF
-    2.upto(row.length - 1) do |index|
-      snippet += "<td data-sort='#{clean_stat row[index]}'>#{pretty_distance row[index]}</td>"
+    TRAVEL_KEYS.each do |key|
+      snippet += "<td data-sort='#{clean_stat row['current.' + key]}'>#{pretty_distance row['current.' + key]}<br>#{calculate_delta(row, key, 'pretty_distance')}</td>"
     end
     snippet += <<-EOF        
       </tr>
@@ -193,16 +215,17 @@ def food_stats_table(rows)
     <tbody>
   EOF
   rows.each do |row|
-    graph_button = build_graph_modal_button row[0] + " #{pretty_stat row[1]} Food Items Distribution", FOOD_KEYS, row[2..-1], :int
+    graph_button = build_graph_modal_button row['name'] + " #{pretty_stat row['current.food_total']} Food Items Distribution", FOOD_KEYS, row, :int
     snippet += <<-EOF
       <tr>
-        <td data-sort="#{row[0].downcase}"><div class="head-skins" data-player="#{row[0]}"></div></td>
-        <td>#{row[0]} </td>
-        <td data-sort='#{clean_stat row[1]}'>#{pretty_stat row[1]} #{graph_button}</td>
+        <td data-sort="#{row['name'].downcase}"><div class="head-skins" data-player="#{row['name']}"></div></td>
+        <td>#{row['name']} </td>
+        <td data-sort='#{clean_stat row['current.food_total']}'>#{pretty_stat row['current.food_total']} #{graph_button}<br>#{calculate_delta(row, 'food_total', 'pretty_stat')}</td>
     EOF
-    2.upto(row.length - 1) do |index|
-      snippet += "<td data-sort='#{clean_stat row[index]}'>#{pretty_stat row[index]}</td>"
+    FOOD_KEYS.each do |key|
+      snippet += "<td data-sort='#{clean_stat row['current.' + key]}'>#{pretty_stat row['current.' + key]}<br>#{calculate_delta(row, key, 'pretty_stat')}</td>"
     end
+    
     snippet += <<-EOF
       </tr>
     EOF
@@ -317,12 +340,13 @@ def general_stats_table(rows)
   rows.each do |row|
     snippet += <<-EOF
       <tr>
-        <td data-sort="#{row[0].downcase}"><div class="head-skins" data-player="#{row[0]}"></div></td>
-        <td>#{row[0]}</td>   
-        <td data-sort='#{clean_stat row[2]}'>#{humanize_time(row[2].to_i)}</td>     
+        <td data-sort="#{row['name'].downcase}"><div class="head-skins" data-player="#{row['name']}"></div></td>
+        <td>#{row['name']}</td>   
+        <td data-sort='#{clean_stat row['current.stat.playOneMinute']}'>#{humanize_time(row['current.stat.playOneMinute'].to_i)}<br>#{calculate_delta(row,'stat.playOneMinute', 'humanize_time')}</td>     
     EOF
-    3.upto(row.length - 1) do |index|
-      snippet += "<td data-sort='#{clean_stat row[index]}'>#{pretty_stat row[index]}</td>"  
+
+    GENERAL_STATS_KEYS[1..-1].each do |key|
+      snippet += "<td data-sort='#{clean_stat row['current.' + key]}'>#{pretty_stat row['current.' + key]}<br>#{calculate_delta(row, key, 'pretty_stat')}</td>"  
     end
     snippet += <<-EOF        
       </tr>

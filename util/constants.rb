@@ -2,6 +2,7 @@
 USER_CACHE_URI = 'https://raw.githubusercontent.com/qrush/pickaxe.club/master/usercache.json'
 USER_URI_TEMPLATE = 'https://raw.githubusercontent.com/qrush/pickaxe.club/master/world/stats/UUID.json'
 
+LOCAL_GIT_REPO_LOCATION = '../../pickaxe.club'
 LOCAL_CURRENT_USER_CACHE_PATH = '../../pickaxe.club/usercache.json'
 LOCAL_CURRENT_USER_TEMPLATE_PATH = '../../pickaxe.club/world/stats/UUID.json'
 
