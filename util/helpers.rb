@@ -24,7 +24,7 @@ end
 
 def efficiency num1, num2 #, pretty = true
   return '-' if clean_stat(num1).to_i < MINIMUM_DAMAGE_DEALT
-  '%.0f%' % (clean_stat(num1).to_f / ((clean_stat(num1).to_i + clean_stat(num2).to_i).to_f) * 100)
+  '%.0f%%' % (clean_stat(num1).to_f / ((clean_stat(num1).to_i + clean_stat(num2).to_i).to_f) * 100)
 end
 
 def build_chart_data keys, values, units = 'int'
