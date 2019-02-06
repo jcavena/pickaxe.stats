@@ -5,7 +5,7 @@
 mode = 'player_stats.html'
 
 
-# http://ruby-doc.org/stdlib-2.0.0/libdoc/open-uri/rdoc/OpenURI.html 
+# http://ruby-doc.org/stdlib-2.0.0/libdoc/open-uri/rdoc/OpenURI.html
 require 'open-uri'
 # https://github.com/flori/json
 require 'json'
@@ -95,7 +95,7 @@ BIOMES = [
       result = JSON.parse(buffer)
 
       keys << result.keys
-    rescue 
+    rescue
       #sometimes there is no matching json file.
       #puts "#{user['name']},0,0,0,0,0,0,0,0"
     end
@@ -112,13 +112,8 @@ BIOMES = [
 
   #   keys << result.keys.sort
 
-  # rescue 
+  # rescue
   #   #nothin'
   # end
 
-  puts keys.sort.join(',')  
-
-  
-
-
-
+  puts keys.sort.join(',')

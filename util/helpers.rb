@@ -40,7 +40,7 @@ def build_chart_data keys, values, units = 'int'
     end
     values_hash.map{|k,v| {label: pretty_label(k), value: v['value'].to_i, color: v['color'].to_s}}.to_json
   else
-    keys = keys.map{|s| s.sub(/\A(?!current\.)/, "current.")} 
+    keys = keys.map{|s| s.sub(/\A(?!current\.)/, "current.")}
     values_hash = Hash[*keys.zip(values.values_at(*keys)).flatten]
     values_hash.select{|k,v| calculate_chart_value(v, units) > 0}.map{|k,v| {label: pretty_label(k), value: calculate_chart_value(v, units)}}.to_json
   end
@@ -65,7 +65,7 @@ def calculate_delta(row, stat, formatter = nil)
 
   unless formatter.nil?
     pretty_delta = delta
-    pretty_delta = "#{pretty_delta}t" if row['current.' + stat] =~ /t/ 
+    pretty_delta = "#{pretty_delta}t" if row['current.' + stat] =~ /t/
     pretty_delta = send(formatter, pretty_delta)
   end
 
@@ -87,7 +87,7 @@ def pretty_distance dist
 end
 
 def pretty_stat stat
-  if stat =~ /t/ 
+  if stat =~ /t/
     humanize_time stat
   else
     humanize_number stat
@@ -145,7 +145,7 @@ def kill_stats_table(rows)
     6.upto(row.length - 1) do |index|
       snippet += "<td>#{row[index]}</td>"
     end
-    snippet += <<-EOF        
+    snippet += <<-EOF
       </tr>
     EOF
   end
@@ -185,7 +185,7 @@ def travel_stats_table(rows)
     TRAVEL_KEYS.each do |key|
       snippet += "<td data-sort='#{clean_stat row['current.' + key]}'>#{pretty_distance row['current.' + key]}<br>#{calculate_delta(row, key, 'pretty_distance')}</td>"
     end
-    snippet += <<-EOF        
+    snippet += <<-EOF
       </tr>
     EOF
   end
@@ -225,7 +225,7 @@ def food_stats_table(rows)
     FOOD_KEYS.each do |key|
       snippet += "<td data-sort='#{clean_stat row['current.' + key]}'>#{pretty_stat row['current.' + key]}<br>#{calculate_delta(row, key, 'pretty_stat')}</td>"
     end
-    
+
     snippet += <<-EOF
       </tr>
     EOF
@@ -249,7 +249,7 @@ def crafted_stats_table(rows)
   CRAFTING_KEYS.each do |key|
     if key == 'stat.craftingTableInteraction'
       snippet += "<th>Crafting Table Interaction</th>"
-    else  
+    else
       snippet += "<th>#{pretty_label key}</th>"
     end
   end
@@ -270,7 +270,7 @@ def crafted_stats_table(rows)
     CRAFTING_KEYS.each do |key|
       snippet += "<td data-sort='#{clean_stat row['current.' + key]}'>#{pretty_stat row['current.' + key]}<br>#{calculate_delta(row, key, 'pretty_stat')}</td>"
     end
-    snippet += <<-EOF        
+    snippet += <<-EOF
       </tr>
     EOF
   end
@@ -320,7 +320,7 @@ def mined_stats_table(rows)
       </tbody>
     </table>
   EOF
-  
+
 end
 
 def general_stats_table(rows)
@@ -345,14 +345,14 @@ def general_stats_table(rows)
     snippet += <<-EOF
       <tr>
         <td data-sort="#{row['name'].downcase}"><div class="head-skins" data-player="#{row['name']}"></div></td>
-        <td>#{row['name']}</td>   
-        <td data-sort='#{clean_stat row['current.stat.playOneMinute']}'>#{humanize_time(row['current.stat.playOneMinute'].to_i)}<br>#{calculate_delta(row,'stat.playOneMinute', 'humanize_time')}</td>     
+        <td>#{row['name']}</td>
+        <td data-sort='#{clean_stat row['current.stat.playOneMinute']}'>#{humanize_time(row['current.stat.playOneMinute'].to_i)}<br>#{calculate_delta(row,'stat.playOneMinute', 'humanize_time')}</td>
     EOF
 
     GENERAL_STATS_KEYS[1..-1].each do |key|
-      snippet += "<td data-sort='#{clean_stat row['current.' + key]}'>#{pretty_stat row['current.' + key]}<br>#{calculate_delta(row, key, 'pretty_stat')}</td>"  
+      snippet += "<td data-sort='#{clean_stat row['current.' + key]}'>#{pretty_stat row['current.' + key]}<br>#{calculate_delta(row, key, 'pretty_stat')}</td>"
     end
-    snippet += <<-EOF        
+    snippet += <<-EOF
       </tr>
     EOF
   end
@@ -361,7 +361,7 @@ def general_stats_table(rows)
       </tbody>
     </table>
   EOF
-  
+
 end
 
 def adventuring_time_table(rows)
@@ -401,7 +401,7 @@ def adventuring_time_table(rows)
   end
   snippet += <<-EOF
       </tbody>
-    </table>        
+    </table>
   EOF
 end
 
@@ -421,7 +421,7 @@ def achievements_table(rows)
     EOF
   rows.each do |row|
     graph_button = build_graph_modal_button row[0] + " #{pretty_stat row[1]} Achievements", row[4], row[2], :bool
-    
+
     snippet += <<-EOF
       <tr>
         <td data-sort="#{row[0].downcase}"><div class="scale-skins scale-3" data-player="#{row[0]}"></div></td>
@@ -443,6 +443,6 @@ def achievements_table(rows)
   end
   snippet += <<-EOF
       </tbody>
-    </table>        
+    </table>
   EOF
 end
