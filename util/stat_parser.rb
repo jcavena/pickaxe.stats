@@ -77,7 +77,7 @@ def generate_kill_stats(player_list)
   end
   content = kill_stats_table(rows)
 
-  File.open('../kills.html', 'w'){ |file| file.write template.gsub('<player_content>',content)}
+  File.open('../kills.html', 'w'){ |file| file.write template.gsub('<player_content>',content).gsub('<updated_on>', Time.now.strftime('%v'))}
 end
 
 def generate_adventuring_time(player_list)
@@ -105,7 +105,7 @@ def generate_adventuring_time(player_list)
   end
   content = adventuring_time_table(rows)
 
-  File.open('../adventuring_time.html', 'w'){ |file| file.write template.gsub('<player_content>',content)}
+  File.open('../adventuring_time.html', 'w'){ |file| file.write template.gsub('<player_content>',content).gsub('<updated_on>', Time.now.strftime('%v'))}
 end
 
 def generate_achievements(player_list)
@@ -142,7 +142,7 @@ def generate_achievements(player_list)
   end
   content = achievements_table(rows)
 
-  File.open('../achievements.html', 'w'){ |file| file.write template.gsub('<player_content>',content)}
+  File.open('../achievements.html', 'w'){ |file| file.write template.gsub('<player_content>',content).gsub('<updated_on>', Time.now.strftime('%v'))}
 end
 
 def generate_travel_stats
@@ -363,8 +363,8 @@ def generate_bubble_stats(player_list, key, threshold = 0)
 end
 
 def generate_file(file_name, content)
-  template = File.open('template.html').read  
-  File.open(file_name, 'w'){ |file| file.write template.gsub('<player_content>',content)}
+  template = File.open('template.html').read
+  File.open(file_name, 'w'){ |file| file.write template.gsub('<player_content>',content).gsub('<updated_on>', Time.now.strftime('%v'))}
 end
 
 def load_all_player_data
@@ -411,13 +411,13 @@ time = Benchmark.measure do
   generate_kill_stats(player_list)
   puts "FINISHED GENERATING KILL STATS PAGE..."
 
-  puts "GENERATING ADVENTURING TIME PAGE..."
-  generate_adventuring_time(player_list)
-  puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
+  # puts "GENERATING ADVENTURING TIME PAGE..."
+  # generate_adventuring_time(player_list)
+  # puts "FINISHED GENERATING ADVENTURING TIME PAGE..."
 
-  puts "GENERATING ACHIEVEMENTS PAGE..."
-  generate_achievements(player_list)
-  puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
+  # puts "GENERATING ACHIEVEMENTS PAGE..."
+  # generate_achievements(player_list)
+  # puts "FINISHED GENERATING ACHIEVEMENTS PAGE..."
 
   puts "GENERATING TRAVEL PAGE..."
   generate_travel_stats #(player_list)
