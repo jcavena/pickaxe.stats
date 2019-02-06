@@ -1,5 +1,5 @@
 require 'benchmark'
-# http://ruby-doc.org/stdlib-2.0.0/libdoc/open-uri/rdoc/OpenURI.html 
+# http://ruby-doc.org/stdlib-2.0.0/libdoc/open-uri/rdoc/OpenURI.html
 require 'open-uri'
 # https://github.com/flori/json
 require 'json'
@@ -35,7 +35,7 @@ def get_player_data(player, which_week = 'current')
 end
 
 def generate_player_stats_csv(player_list)
-  # CSV friendly version. Just printing to console and saving manually. Should just save to csv file instead.    
+  # CSV friendly version. Just printing to console and saving manually. Should just save to csv file instead.
   # leave in when doing the CSV version, match up the names to the stats. Comment out when doing the other versions.
   puts 'Name,Time Killed,Deaths,Mobs Killed,Players Killed,Villagers Killed,Pigmen Killed,Ghast Killed,Horses Killed,Seconds Played'
 
@@ -43,7 +43,7 @@ def generate_player_stats_csv(player_list)
     begin
       result = get_player_data player
       puts "#{player['name']},#{humanize(result['stat.playOneMinute'].to_i / 20)},#{result['stat.deaths'].to_i },#{result['stat.playerKills'].to_i},#{result['stat.mobKills'].to_i},#{result['stat.killEntity.Villager'].to_i},#{result['stat.killEntity.PigZombie'].to_i},#{result['stat.killEntity.Ghast'].to_i},#{result['stat.killEntity.EntityHorse'].to_i},#{result['stat.playOneMinute'].to_i / 20}"
-    rescue 
+    rescue
       #sometimes there is no matching json file.
     end
   end
@@ -52,7 +52,7 @@ end
 def generate_kill_stats(player_list)
   template = File.open('template.html').read
   rows = []
-  
+
   player_list.each do |player|
     row = []
     begin
@@ -71,7 +71,7 @@ def generate_kill_stats(player_list)
       end
 
       rows << row.flatten
-    rescue 
+    rescue
       #sometimes there is no matching json file.
     end
   end
@@ -84,7 +84,7 @@ def generate_adventuring_time(player_list)
   template = File.open('template.html').read
   rows = []
   biomes_denominator = ADVENTURING_TIME_BIOMES.length.to_f
-  
+
   player_list.each do |player|
     row = []
     begin
@@ -99,7 +99,7 @@ def generate_adventuring_time(player_list)
               "#{ADVENTURING_TIME_BIOMES.sort.join(",")}"
               ]
       rows << row
-    rescue 
+    rescue
       #no matching stats file
     end
   end
@@ -112,7 +112,7 @@ def generate_achievements(player_list)
   template = File.open('template.html').read
   rows = []
   achivements_denominator = ACHIEVEMENTS.length.to_f
-  
+
   player_list.each do |player|
     row = []
     begin
@@ -120,7 +120,7 @@ def generate_achievements(player_list)
       completed_achievements = []
       remaining_achievements = []
       ACHIEVEMENTS.keys.each do |achievement|
-        if achievement == 'achievement.exploreAllBiomes' 
+        if achievement == 'achievement.exploreAllBiomes'
           if result[achievement]['value'].to_s == "1"
             completed_achievements << achievement
           end
@@ -136,7 +136,7 @@ def generate_achievements(player_list)
               "#{ACHIEVEMENTS.values.join(",")}"
               ]
       rows << row
-    rescue 
+    rescue
       #no matching stats file
     end
   end
@@ -147,7 +147,7 @@ end
 
 def generate_travel_stats
   rows = []
-  
+
   @player_data.each do |player|
     row = {}
     begin
@@ -166,19 +166,19 @@ def generate_travel_stats
       row['previous.travel_total'] = previous_travel_total
       rows << row
 
-    rescue 
+    rescue
       #sometimes there is no matching json file.
     end
   end
 
   content = travel_stats_table(rows)
   generate_file('../travel.html', content)
-  
+
 end
 
 def generate_general_stats
   rows = []
-  
+
   @player_data.each do |player|
     row = {}
     begin
@@ -197,7 +197,7 @@ def generate_general_stats
         end
       end
       rows << row #.flatten
-    rescue 
+    rescue
       #sometimes there is no matching json file.
     end
   end
@@ -208,7 +208,7 @@ end
 
 def generate_crafting_stats#(player_list)
   rows = []
-  
+
   @player_data.each do |player|
     row = {}
     begin
@@ -227,19 +227,19 @@ def generate_crafting_stats#(player_list)
       row['previous.crafted_total'] = previous_crafted_total
       rows << row
 
-    rescue 
+    rescue
       #sometimes there is no matching json file.
     end
   end
 
   content = crafted_stats_table(rows)
   generate_file('../crafting.html', content)
-  
+
 end
 
 def generate_mining_stats#(player_list)
   rows = []
-  
+
   @player_data.each do |player|
     row = {}
     begin
@@ -258,7 +258,7 @@ def generate_mining_stats#(player_list)
       row['previous.mined_total'] = previous_mined_total
       rows << row
 
-    rescue 
+    rescue
       #sometimes there is no matching json file.
     end
   end
@@ -270,7 +270,7 @@ end
 
 def generate_food_stats#(player_list)
   rows = []
-  
+
   @player_data.each do |player|
     row = {}
     begin
@@ -289,7 +289,7 @@ def generate_food_stats#(player_list)
       row['current.food_total'] = current_food_total
       row['previous.food_total'] = previous_food_total
       rows << row
-    rescue 
+    rescue
       #sometimes there is no matching json file.
     end
   end
@@ -309,17 +309,17 @@ def generate_grand_total_stats(player_list, keys = [])
     keys += KILLEDBY_KEYS
     keys += MINING_KEYS
     keys += CRAFTING_KEYS
-    
+
     #keys += ACHIEVEMENT_KEYS
     #keys += BIOMES
-  end  
+  end
 
   rows = []
-  
+
   player_list.each do |player|
     begin
       rows << get_player_data(player)
-    rescue 
+    rescue
       #sometimes there is no matching json file.
     end
   end
@@ -352,7 +352,7 @@ def generate_bubble_stats(player_list, key, threshold = 0)
       end
       next if value < threshold
       rows[player['name']] = value
-    rescue 
+    rescue
       #sometimes there is no matching json file.
     end
   end
@@ -381,7 +381,7 @@ def load_all_player_data
       puts "#{player['name']} has no current stats"
     end
   end
-  
+
   # puts @player_data
 
 end
@@ -394,10 +394,10 @@ time = Benchmark.measure do
   player_list = get_player_list #.sample(10)
 
   load_all_player_data
-  
+
   #puts @player_data
 
-  # puts "Player Count: #{player_list.size}"
+  puts "Player Count: #{player_list.size}"
 
   puts 'generating grand total stats'
   generate_grand_total_stats(player_list)
