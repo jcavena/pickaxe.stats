@@ -19,44 +19,53 @@ def process_this_week commit, week_number
 
   player_list = get_player_list
 
-  w = WeeklyStat.new
-  w.commit_date = commit.date
-  w.week_number = week_number
-  w.sha = commit.sha
-  w.message = commit.message
-  w.player_count = player_list.count
-  w.save
+  w = WeeklyStat.all.where(sha: commit.sha).first
+
+  if w.nil?
+
+    w = WeeklyStat.new
+    w.commit_date = commit.date
+    w.week_number = week_number
+    w.sha = commit.sha
+    w.message = commit.message
+    w.player_count = player_list.count
+    w.save
 
 
-  print "\t\t\t"
+    print "\t\t\t"
 
-  player_list.each do |player_data|
-    p = Player.where(uuid: player_data['uuid']).first
+    player_list.each do |player_data|
+      p = Player.where(uuid: player_data['uuid']).first
 
-    if p
-      print "U"
-      # puts "\t\t\tPlayer #{player_data['name']} exists, updating."
-      p.last_seen_weekly_stat_id = w.id
-      p.save
-    else
-      print "c"
-      # puts "\t\t\tPlayer #{player_data['name']} does not exist, creating."
-      p = Player.new
-      p.name = player_data['name']
-      p.uuid = player_data['uuid']
-      p.first_seen_weekly_stat_id = w.id
-      p.last_seen_weekly_stat_id = w.id
-      p.save
+      if p
+        print "U"
+        # puts "\t\t\tPlayer #{player_data['name']} exists, updating."
+        p.last_seen_weekly_stat_id = w.id
+        p.save
+      else
+        print "c"
+        # puts "\t\t\tPlayer #{player_data['name']} does not exist, creating."
+        p = Player.new
+        p.name = player_data['name']
+        p.uuid = player_data['uuid']
+        p.first_seen_weekly_stat_id = w.id
+        p.last_seen_weekly_stat_id = w.id
+        p.save
+      end
+
+      process_player p, w
+
     end
-
-    process_player p, w
-
+  else
+    puts "\t\tweekly stats record exists for this sha #{commit.sha}"
   end
+
   end_time = Time.now
   duration = end_time - start_time
-  
+
   puts "\n\t\tprocess_this_week end #{commit.date} #{week_number} #{end_time}\n"
-  puts "Processing Time: #{duration}\n"
+  puts "\t\tProcessing Time: #{duration}\n\n"
+  puts "*" * 120
 end
 
 def get_player_list
@@ -67,15 +76,17 @@ def get_player_list
 end
 
 def get_player_data(player)
-  buffer = nil
+  buffer = []
   player_stat_file = LOCAL_CURRENT_USER_TEMPLATE_PATH.gsub("UUID", player.uuid)
   # puts "\t\t\t\t#{player_stat_file} for #{player.name}"
-  begin
+  if File.exists?(player_stat_file)
     buffer = File.open(player_stat_file).read
-  rescue
-
+    output = JSON.parse(buffer)
+  else
+    output = []
   end
-  JSON.parse(buffer)
+
+  return output
 end
 
 def process_player player, weekly_stat
