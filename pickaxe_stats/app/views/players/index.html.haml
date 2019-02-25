@@ -1,0 +1,27 @@
+.container
+  .row
+    %h1 Players
+  .row
+    %table.table.table-stripped.table-hover
+      %thead
+        %tr
+          %th
+            Name
+          %th
+            First week seen
+          %th
+            Last week seen
+          %th
+            Actions
+      %tbody
+        - @players.all.order("lower(name)").each do |player|
+          %tr
+            %td= link_to player.name, player
+            %td
+              = player.first_seen.week_number unless player.first_seen.nil?
+            %td
+              = player.last_seen.week_number unless player.last_seen.nil?
+            %td
+              = link_to edit_player_path(player) do
+                %i.fa.fa-pencil
+                Edit

@@ -1,0 +1,43 @@
+.navbar-inverse
+  .navbar-header
+    %button.navbar-toggle{ type: 'button', data: { toggle: 'collapse', target: '.navbar-collapse' } }
+      %span.sr-only
+        Toggle navigation
+      %span.icon-bar
+      %span.icon-bar
+      %span.icon-bar
+    %a.navbar-brand{ href: '/'}
+      = image_tag "pickaxe_club_logo.png", alt: 'Pickaxe Club Stats'
+  .collapse.navbar-collapse
+    %ul.nav.navbar-nav.navbar-right#fix-me
+      %li
+        = link_to dashboard_path do
+          %i.fa.fa-sun-o
+          Dashboard
+      %li
+        = link_to players_path do
+          Players
+      %li
+        = link_to weekly_stats_path do
+          Weekends
+      %li
+        = link_to stats_general_path do
+          General
+      %li
+        = link_to stats_travel_path do
+          Travel
+      %li
+        = link_to stats_food_path do
+          Food
+      %li
+        = link_to stats_kills_path do
+          Kills
+      %li
+        = link_to stats_crafting_path do
+          Crafting
+      %li
+        = link_to stats_achievements_path do
+          Achievements
+      %li
+        = link_to stats_adventuring_time_path do
+          Adventuring Time

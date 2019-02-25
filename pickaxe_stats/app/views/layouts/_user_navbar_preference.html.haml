@@ -1,0 +1,6 @@
+- if user_signed_in? && current_user.navbar_preference == 'not fixed' || !user_signed_in?
+  .navbar.navbar-default{role: 'navigation'}
+    = render partial: "layouts/header"
+- else
+  .navbar.navbar-default.navbar-fixed-top{role: 'navigation'}
+    = render partial: "layouts/header"

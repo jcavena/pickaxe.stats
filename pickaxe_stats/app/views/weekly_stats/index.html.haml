@@ -1,0 +1,41 @@
+.container
+  .row
+    .col-md-12
+      %h1 Listing weekly_stats
+  .row
+    .col-md-12
+      %table.table.table-striped.table-hover
+        %thead
+          %tr
+            %th
+              Weekend
+              %th
+                Launched
+              %th
+                Shutdown
+              %th
+                Up for
+              %th
+                Commit Date
+              %th
+                Message
+              %th Actions
+          %tbody
+            - @weekly_stats.each do |weekly_stat|
+              %tr
+                %td.text-center
+                  = link_to weekly_stat.weekend_number, weekly_stat
+                %td
+                  = display_short_date weekly_stat.launched_at
+                %td
+                  = display_short_date weekly_stat.shutdown_at
+                %td
+                  - unless weekly_stat.shutdown_at.nil? || weekly_stat.launched_at.nil?
+                    = display_stat_time((weekly_stat.shutdown_at - weekly_stat.launched_at) * 20)
+                %td
+                  = display_short_date weekly_stat.commit_date
+                %td
+                  = weekly_stat.message
+                %td
+                  = link_to edit_weekly_stat_path(weekly_stat) do
+                    %i.fa.fa-pencil

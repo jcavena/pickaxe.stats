@@ -1,0 +1,12 @@
+.container
+  .row
+    .col-md-12
+      %h1 Editing weekly_stat
+  .row
+    .col-md-12
+      = render 'form'
+  .row
+    .col-md-12
+      = link_to 'Show', @weekly_stat
+      \|
+      = link_to 'Back', weekly_stats_path

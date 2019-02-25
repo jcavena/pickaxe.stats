@@ -1,0 +1,68 @@
+.container
+  .row
+    .col-md-12
+      %h1
+        = "#{@player.name}'s Stats!"
+  .row
+    .col-md-3
+      .panel.panel-default
+        .panel-heading
+          %h3
+            %strong
+              Total Time Played
+        .panel.body
+          %h3.text-center
+            = display_stat_time @player.stat_for_current('stat.playOneMinute').stat_value
+    .col-md-3
+      .panel.panel-default
+        .panel-heading
+          %h3
+            %strong
+              Last Weekend
+              %br
+              Time Played
+        .panel.body
+          %h3.text-center
+            = display_stat_time @player.stat_for_current('stat.playOneMinute').stat_delta
+  .row
+    .col-md-12
+      %h3
+        %strong
+          General
+      %table.table.table-bordered.table-hover.table-striped
+        %thead
+          %tr
+            %th
+              Weekend
+            - GENERAL_STATS_KEYS.each do |key|
+              %th
+                = key.gsub('stat.','').titlecase
+        %tbody
+          - WeeklyStat.order(commit_date: :desc).each do |ws|
+            %tr
+              %td.text-center
+                = link_to weekly_stat_path(ws) do
+                  = ws.weekend_number || ws.week_number
+              - GENERAL_STATS_KEYS.each do |key|
+                - stat = Stat.where(weekly_stat_id: ws.id, player_id: @player.id, stat_key: key).first
+                %td.text-right
+                  = display_stat_value(stat.stat_key, stat.stat_value) unless stat.nil?
+                  %br
+                  - unless stat.nil?
+                    - if stat.stat_delta > 0
+                      .text-success
+                        %i.fa.fa-arrow-up
+                        = "#{display_stat_value(stat.stat_key, stat.stat_delta)}"
+                    - elsif stat.stat_delta < 0
+                      .text-danger
+                        %i.fa.fa-arrow-down
+                          = "#{display_stat_value(stat.stat_key, stat.stat_delta)}"
+                    - else
+                      .text-secondary
+                        = "--"
+
+  .row
+    .col-md-12
+      = link_to 'Edit', edit_player_path(@player)
+      |
+      = link_to 'Back', players_path

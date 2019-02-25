@@ -1,0 +1,10 @@
+.container
+  .row
+    .col-md-12
+      %h1
+        Weekend #
+        = @weekly_stat.weekend_number
+      %br
+        = display_short_date @weekly_stat.launched_at
+        to
+        = display_short_date @weekly_stat.shutdown_at
